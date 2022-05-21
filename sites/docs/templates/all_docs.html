@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <title>All Documents</title>
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      const ndDialog = document.getElementById('new_doc_dialog');
+      $("#new_doc_btn").click(function(e) {
+        ndDialog.showModal();
+      });
+    })
+  </script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    input[type=text] {
+      width: 300px;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+  </style>
+
+</head>
+<body>
+  <h1>All Documents</h1>
+  <button id="new_doc_btn">New Document</button>
+  <dialog id="new_doc_dialog">
+    <h3>New Document Dialog</h3>
+    <form method="post" action="/new_doc">
+      <div>
+        <label>Enter Folder Name</label><br>
+        <input type="text" name="folder" required />
+      </div>
+      <div>
+        <label>Enter Document Title</label><br>
+        <input type="text" name="doc_title" required />
+      </div>
+      <div>
+        <input type="submit" value="Create" />
+      </div>
+      <p class="help">Press <b>ESC</b> to dismiss</p>
+    </form>
+  </dialog>
+</body>
+</html>

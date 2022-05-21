@@ -1,0 +1,9 @@
+table: docs
+fields:
+  doc_title string required
+  folder string required
+  update_dt datetime required
+::
+unique_groups:
+  folder doc_title
+::
