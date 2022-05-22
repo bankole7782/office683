@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+    function saveToDB() {
+      $.ajax({
+        type: "POST",
+        url: "/save_doc/{{.DocId}}",
+        data: {
+          "raw_doc": $("#raw_doc").val(),
+        }
+      }).done(function(o) {
+        setTimeout(function() {
+          $("#saving_msg").hide();
+        }, 2000)
+      })
+    }
+
+    $(document).ready(function() {
+      var timeoutId;
+      $('#raw_doc').on('input propertychange', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function() {
+          $("#saving_msg").show();
+          // Runs 1 second (1000 ms) after the last change
+          saveToDB();
+        }, 1000);
+      });
+
+      window.addEventListener("offline", function(e) {
+        $("#offline").show()
+      })
+
+      window.addEventListener("online", function(e) {
+        $("#offline").hide();
+      })
+
+    })
+  </script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    input[type=text] {
+      width: 300px;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+    #work_area {
+      width: calc( 100% - 450px);
+      float: left;
+    }
+    #md_help {
+      width: 400px;
+      float: right;
+    }
+    #work_area, #md_help {
+      margin-top: 20px;
+    }
+    #header {
+      width: fit-content;
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    h1, h2, h3, h4 {
+      margin: 5px 0px;
+    }
+    #raw_doc {
+      width: 100%;
+      height: 600px;
+    }
+    #md_help pre {
+      margin-left: 15px;
+    }
+    .info {
+      display: none;
+    }
+    #offline {
+      width: fit-content;
+      margin: 5px auto;
+    }
+  </style>
+
+  <title>{{.DocDetails.doc_title}} | Docs </title>
+</head>
+<body>
+  <div id="header">
+    <span>Docs</span>
+    <span>Doc Title: <b>{{.DocDetails.doc_title}}</b> </span>
+    <button id="view_rdoc">View Rendered Document</button>
+    <span>Rendered Document Link: <b>/doc/{{.DocId}}</b></span>
+    <button id="make_public">Make Public</button>
+  </div>
+
+  <p id="offline" class="info" style="color: red;">
+    You are not connected to the internet. Saving your documents will fail.
+  </p>
+
+  <div id="work_area">
+    <textarea id="raw_doc">{{.RawDoc}}</textarea>
+  </div>
+  <div id="md_help">
+    <h3>Rules of Markdown</h3>
+
+    <h4>Headings</h4>
+    <pre>
+# H1
+## H2
+### H3</pre>
+
+    <h4>Bold Text</h4>
+    <pre>**bold text**</pre>
+
+    <h4>Italicized Text</h4>
+    <pre>*text in italics*</pre>
+
+    <h4>Ordered List</h4>
+    <pre>
+1. First Item
+1. Second Item
+1. Third Item</pre>
+
+    <h4>Unordered List</h4>
+    <pre>- First item
+- Second item
+- Third item</pre>
+
+    <h4>Links</h4>
+    <pre>[title](https://example.com)</pre>
+
+    <h4>Image</h4>
+    <pre>![alt text](image.png)</pre>
+
+    <h4>Tables</h4>
+    <pre>| Syntax | Description |
+| ----------- | ----------- |
+| Header | Title |
+| Paragraph | Text |</pre>
+  </div>
+
+  <div style="clear: both;"></div>
+
+  <div id="msgs">
+    <p id="saving_msg" class="info">Saving Your document</p>
+  </div>
+</body>
+</html>

@@ -7,10 +7,19 @@ import (
   "fmt"
   "html/template"
   "strings"
+  "path/filepath"
+  "os"
 )
 
 
 func main() {
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    panic(err)
+  }
+
+  os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
+
   r := mux.NewRouter()
 
   r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
@@ -27,10 +36,12 @@ func main() {
 
   r.HandleFunc("/", allDocs)
   r.HandleFunc("/new_doc", newDocument)
+  r.HandleFunc("/update_doc/{id}", updateDoc)
+  r.HandleFunc("/save_doc/{id}", saveDoc)
 
   fmt.Printf("Running docs @ http://127.0.0.1:%s\n", office683_shared.DocsPort)
 
-  err := http.ListenAndServe(fmt.Sprintf(":%s", office683_shared.DocsPort), r)
+  err = http.ListenAndServe(fmt.Sprintf(":%s", office683_shared.DocsPort), r)
   if err != nil {
     fmt.Println(err)
     panic(err)
