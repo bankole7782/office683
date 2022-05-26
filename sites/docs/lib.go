@@ -22,7 +22,7 @@ func AddHandlers(r *mux.Router) {
   // gallery
   r.HandleFunc("/docs_images/", gallery)
   r.HandleFunc("/upload_image", uploadImage)
-  r.HandleFunc("/get_image/{img}", getImage)
+  r.HandleFunc("/gi/{img}", getImage)
 }
 
 

@@ -20,13 +20,22 @@
       }
       #header {
         width: fit-content;
-        margin: 0 auto;
+        margin: 10px auto;
       }
       #header * {
         margin-left: 20px;
       }
 
-
+      img {
+        width: 200px;
+      }
+      .a_image {
+        float: left;
+        margin-right: 20px;
+      }
+      #gallery {
+        margin-top: 10px;
+      }
     </style>
 
     <script src="/gs/jquery-3.6.0.min.js"></script>
@@ -55,7 +64,13 @@
     </div>
 
     <div id="gallery">
-
+      {{range .ImageDescs}}
+        <div class="a_image">
+          <image src="/gi/{{.id}}.{{.format}}" alt="{{.original_name}}" />
+          <p>Original Name: <b>{{.original_name}}</b></p>
+          <p>Image Path: <b>/gi/{{.id}}.{{.format}}</b>
+        </div>
+      {{end}}
     </div>
     <dialog id="image_upload_dialog">
       <p>Reduce the size of your picture before uploading</p>
