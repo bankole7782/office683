@@ -6,3 +6,6 @@ import (
 
 //go:embed statics/*
 var ContentStatics embed.FS
+
+//go:embed templates/*
+var Content embed.FS

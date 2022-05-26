@@ -5,6 +5,7 @@ import (
   "fmt"
   "path/filepath"
   "os"
+  "html/template"
   "github.com/gorilla/mux"
   "github.com/bankole7782/office683/office683_shared"
   "github.com/bankole7782/office683/sites/docs"
@@ -19,6 +20,11 @@ func main() {
   os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
 
   r := mux.NewRouter()
+
+  r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/home.html"))
+    tmpl.Execute(w, nil)
+  })
 
   r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
