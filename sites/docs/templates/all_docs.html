@@ -6,6 +6,8 @@
   <script>
     $(document).ready(function() {
       const ndDialog = document.getElementById('new_doc_dialog');
+      const deleteDocDialog = document.getElementById("delete_doc_dialog");
+
       $("#new_doc_btn").click(function(e) {
         ndDialog.showModal();
       });
@@ -27,6 +29,33 @@
         $(e.target).addClass("active");
       });
 
+      $(".delete_doc_btn").click(function(e) {
+        e.preventDefault();
+
+        var docId = $(e.target).data("docid")
+        var docTitle = $(e.target).data("doctitle")
+
+        msg = "Confirm delete of Document: " + docTitle
+        $("#delete_msg").text(msg);
+        $("#docid_span").text(docId);
+
+        deleteDocDialog.showModal();
+      });
+
+      $("#cancel_doc_dialog").click(function(e) {
+        deleteDocDialog.close();
+      });
+
+      $("#true_delete_btn").click(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+          type: "POST",
+          url: "/delete_doc_u89xe/" + $("#docid_span").text(),
+        }).done(function(o) {
+          location.reload()
+        });
+      })
     })
   </script>
   <style>
@@ -121,11 +150,12 @@
           {{else}}
           <div class="a_doc" data-folder="{{$fname}}">
           {{end}}
-            <h3>{{$fname}}</h3>
             <p>Title : <b>{{.doc_title}}</b></p>
             <p>Last Update date: <b>{{.updated}}</b></p>
             <p>Doc Size: <b>{{.doc_size}}</b></p>
-            <a href="/update_doc/{{.id}}">Update Doc</a>
+            <a href="/update_doc/{{.id}}">Update Doc</a>&nbsp;&nbsp;
+            <a href="/doc/{{.id}}">View Rendered Doc</a>&nbsp;&nbsp;
+            <a href="#" class="delete_doc_btn" data-docid="{{.id}}" data-doctitle="{{.doc_title}}">Delete Document</a>
           </div>
         {{end}}
       {{end}}
@@ -146,6 +176,14 @@
       </div>
       <p class="help">Press <b>ESC</b> to dismiss</p>
     </form>
+  </dialog>
+
+  <dialog id="delete_doc_dialog">
+    <p id="delete_msg"></p>
+    <span id="docid_span" style="display:none;"></span>
+    <button id="true_delete_btn">Delete</button>
+    &nbsp;&nbsp;&nbsp;
+    <button id="cancel_doc_dialog">Cancel</button>
   </dialog>
 </body>
 </html>

@@ -39,6 +39,7 @@ func main() {
   r.HandleFunc("/update_doc/{id}", updateDoc)
   r.HandleFunc("/save_doc/{id}", saveDoc)
   r.HandleFunc("/doc/{id}", viewRenderedDoc)
+  r.HandleFunc("/delete_doc_u89xe/{id}", deleteDoc)
 
   fmt.Printf("Running docs @ http://127.0.0.1:%s\n", office683_shared.DocsPort)
 

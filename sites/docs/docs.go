@@ -232,3 +232,30 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
   tmpl := template.Must(template.ParseFS(content, "templates/render_doc.html"))
   tmpl.Execute(w, Context{renderedDoc, docDetails, docId})
 }
+
+
+func deleteDoc(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  docId := vars["id"]
+
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    panic(err)
+  }
+
+  flaarumClient := office683_shared.GetFlaarumClient()
+  err = flaarumClient.DeleteRows(fmt.Sprintf(`
+    table: docs
+    where:
+      id = %s
+    `, docId))
+  if err != nil {
+    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  docPath := filepath.Join(rootPath, "docs", docId + ".md")
+  os.Remove(docPath)
+
+  fmt.Fprintf(w, "ok")
+}
