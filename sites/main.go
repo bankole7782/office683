@@ -18,6 +18,7 @@ func main() {
   }
 
   os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
+  os.MkdirAll(filepath.Join(rootPath, "docs_images"), 0777)
 
   r := mux.NewRouter()
 

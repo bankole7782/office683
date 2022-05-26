@@ -10,12 +10,19 @@ import (
 
 
 func AddHandlers(r *mux.Router) {
+  // documents
+
   r.HandleFunc("/docs/", allDocs)
   r.HandleFunc("/new_doc", newDocument)
   r.HandleFunc("/update_doc/{id}", updateDoc)
   r.HandleFunc("/save_doc/{id}", saveDoc)
   r.HandleFunc("/doc/{id}", viewRenderedDoc)
   r.HandleFunc("/delete_doc_u89xe/{id}", deleteDoc)
+
+  // gallery
+  r.HandleFunc("/docs_images/", gallery)
+  r.HandleFunc("/upload_image", uploadImage)
+  r.HandleFunc("/get_image/{img}", getImage)
 }
 
 

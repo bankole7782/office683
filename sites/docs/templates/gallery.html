@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+
+    <title>Images for Documents Inclusion | All Programs</title>
+    <style>
+      @font-face {
+        font-family: "Quicksand";
+        src: url("/gs/Quicksand-Regular.ttf");
+      }
+      body {
+        font-family: Quicksand;
+        width: 960px;
+        margin: 0 auto;
+      }
+      input, button {
+        font-family: Quicksand;
+      }
+      #header {
+        width: fit-content;
+        margin: 0 auto;
+      }
+      #header * {
+        margin-left: 20px;
+      }
+
+
+    </style>
+
+    <script src="/gs/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function(e) {
+      const imageUploadDialog = document.getElementById("image_upload_dialog");
+
+      $("#upload_image_btn").click(function(e) {
+        e.preventDefault();
+        imageUploadDialog.showModal();
+      })
+
+      $("#cancel_btn").click(function(e) {
+        imageUploadDialog.close();
+      });
+
+    })
+    </script>
+  </head>
+  <body>
+    <div id="header">
+      <span>Images for Documents</span>
+      <a href="/">Office683 Home</a>
+      <a href="/docs/">All Docs</a>
+      <button id="upload_image_btn">Upload Image</button>
+    </div>
+
+    <div id="gallery">
+
+    </div>
+    <dialog id="image_upload_dialog">
+      <p>Reduce the size of your picture before uploading</p>
+      <form method="post" enctype="multipart/form-data" action="/upload_image">
+        <div>
+          <label>Pick Image</label>
+          <input type="file" accept="image/jpeg,image/x-png,image/gif,image/png" name="image" />
+        </div>
+        <div>
+          <input type="submit" value="Upload Image" />&nbsp;&nbsp;
+          <button type="button" id="cancel_btn">Cancel Upload</a>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

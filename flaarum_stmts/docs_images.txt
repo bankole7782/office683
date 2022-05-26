@@ -1,0 +1,6 @@
+table: docs_images
+fields:
+  original_name string required
+  format string required
+  upload_dt datetime required
+::

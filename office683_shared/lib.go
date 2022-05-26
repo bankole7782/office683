@@ -11,7 +11,6 @@ import (
 )
 
 
-const DocsPort = "34317"
 
 func GetRootPath() (string, error) {
   var rootPath string
