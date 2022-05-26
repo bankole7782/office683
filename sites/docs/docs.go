@@ -11,6 +11,7 @@ import (
   "github.com/pkg/errors"
   "github.com/gorilla/mux"
   "github.com/russross/blackfriday/v2"
+  "github.com/dustin/go-humanize"
   "github.com/bankole7782/office683/office683_shared"
 )
 
@@ -37,19 +38,79 @@ func newDocument(w http.ResponseWriter, r *http.Request) {
 
 
 func allDocs(w http.ResponseWriter, r *http.Request) {
-  // flaarumClient := office683_shared.GetFlaarumClient()
-  // folderRows, err := flaarumClient.Search(`
-  //   table: docs distinct
-  //   fields: folder
-  //   `)
-  // folders := make([]string, 0)
-  // for _, row := range *rows {
-  //   folders = append(folders, row["folder"].(string))
-  // }
-  //
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    panic(err)
+  }
+
+  flaarumClient := office683_shared.GetFlaarumClient()
+  folderRows, err := flaarumClient.Search(`
+    table: docs distinct
+    fields: folder
+    order_by: folder asc
+    `)
+  if err != nil {
+    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+  folders := make([]string, 0)
+  folderToDocsMap := make(map[string][]map[string]interface{})
+  for _, row := range *folderRows {
+    folderName := row["folder"].(string)
+    folders = append(folders, row["folder"].(string))
+
+    docRows, err := flaarumClient.Search(fmt.Sprintf(`
+      table: docs
+      where:
+        folder = '%s'
+      `, folderName))
+
+    if err != nil {
+      fmt.Println(err)
+    }
+
+    elems := make([]map[string]interface{}, 0)
+    for _, docRow := range *docRows {
+      docPath := filepath.Join(rootPath, "docs", strconv.FormatInt(docRow["id"].(int64), 10) + ".md")
+      docSize := "0B"
+      if office683_shared.DoesPathExists(docPath) {
+
+        file, err := os.Open(docPath)
+        if err != nil {
+          ErrorPage(w, errors.Wrap(err, "os error"))
+          return
+        }
+        defer file.Close()
+
+        stat, err := file.Stat()
+        if err != nil {
+          ErrorPage(w, errors.Wrap(err, "os error"))
+          return
+        }
+        docSize = humanize.Bytes(uint64(stat.Size()))
+      }
+
+      elems = append(elems, map[string]interface{} {
+        "doc_title": docRow["doc_title"],
+        "updated": docRow["update_dt"],
+        "id": docRow["id"],
+        "doc_size": docSize,
+      })
+
+    }
+
+    folderToDocsMap[folderName] = elems
+  }
+
+  type Context struct {
+    Folders []string
+    FoldersToDocsMap map[string][]map[string]interface{}
+  }
+
+
 
   tmpl := template.Must(template.ParseFS(content, "templates/all_docs.html"))
-  tmpl.Execute(w, nil)
+  tmpl.Execute(w, Context{folders, folderToDocsMap})
 }
 
 

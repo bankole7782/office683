@@ -9,6 +9,24 @@
       $("#new_doc_btn").click(function(e) {
         ndDialog.showModal();
       });
+
+      $(".folder_href").click(function(e) {
+        e.preventDefault();
+        var folderName = $(e.target).data("folder")
+
+        $(".a_doc").each(function(i, el) {
+          var docFolderName = $(el).data("folder")
+          if (docFolderName == folderName) {
+            $(el).show();
+          } else {
+            $(el).hide();
+          }
+        });
+
+        $(".folder_href").removeClass("active")
+        $(e.target).addClass("active");
+      });
+
     })
   </script>
   <style>
@@ -18,6 +36,8 @@
     }
     body {
       font-family: Quicksand;
+      width: 960px;
+      margin: 0 auto;
     }
     input, button {
       font-family: Quicksand;
@@ -28,12 +48,88 @@
     form div {
       margin-bottom: 10px;
     }
+    #folders_pane, #docs_pane {
+      float: left;
+    }
+    #folders_pane {
+      width: 200px;
+    }
+    #docs_pane {
+      width: 400px;
+      margin-left: 20px;
+    }
+    h1, h2, h3, h4, p {
+      margin: 5px 0px;
+    }
+    #folders_pane a, #folders_pane a:visited {
+      display: block;
+      padding-left: 10px;
+      padding-bottom: 10px;
+      text-decoration: none;
+      color: blue;
+    }
+    #folders_pane a.active {
+      background-color: #679567;
+      color: #fff;
+    }
+    .a_doc {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .a_doc.active {
+      display:block;
+    }
+    #header {
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    .loud {
+      font-size: 1.5em;
+    }
+    #all_docs {
+      margin-top: 20px;
+    }
   </style>
 
 </head>
 <body>
-  <h1>All Documents</h1>
-  <button id="new_doc_btn">New Document</button>
+  <div id="header">
+    <span class="loud">All Documents</span>
+    <button id="new_doc_btn">New Document</button>
+  </div>
+
+  <div id="all_docs">
+    <div id="folders_pane">
+      <h2>Folder Name</h2>
+      {{range $k, $v := .Folders}}
+        {{ if eq $k 0}}
+          <a href="#" class="folder_href active" data-folder="{{.}}">{{.}}</a>
+        {{ else}}
+          <a href="#" class="folder_href" data-folder="{{.}}">{{.}}</a>
+        {{end}}
+      {{end}}
+    </div>
+    <div id="docs_pane">
+      <h2>Documents</h2>
+      {{range $k, $fname := .Folders}}
+        {{$docs := index $.FoldersToDocsMap $fname}}
+        {{range $docs}}
+          {{if eq $k 0}}
+          <div class="a_doc active" data-folder="{{$fname}}">
+          {{else}}
+          <div class="a_doc" data-folder="{{$fname}}">
+          {{end}}
+            <h3>{{$fname}}</h3>
+            <p>Title : <b>{{.doc_title}}</b></p>
+            <p>Last Update date: <b>{{.updated}}</b></p>
+            <p>Doc Size: <b>{{.doc_size}}</b></p>
+            <a href="/update_doc/{{.id}}">Update Doc</a>
+          </div>
+        {{end}}
+      {{end}}
+  </div>
   <dialog id="new_doc_dialog">
     <h3>New Document Dialog</h3>
     <form method="post" action="/new_doc">
