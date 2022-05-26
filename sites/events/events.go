@@ -110,7 +110,7 @@ func aEvent(w http.ResponseWriter, r *http.Request) {
   }
 
   if (*eventRow)["event_preparation"] != nil {
-    eventDetails["preps"] = (*eventRow)["event_description"].(string)
+    eventDetails["preps"] = (*eventRow)["event_preparation"].(string)
   }
 
   type Context struct {
@@ -127,20 +127,22 @@ func aEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func editAEvent(w http.ResponseWriter, r *http.Request) {
-//   vars := mux.Vars(r)
-//   docId := vars["id"]
-//
-//   flaarumClient := office683_shared.GetFlaarumClient()
-//   docRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
-//     table: events
-//     where:
-//       id = %s
-//     `, docId))
-//   if err != nil {
-//     ErrorPage(w, errors.Wrap(err, "flaarum search error"))
-//     return
-//   }
-//
-//
-// }
+
+func deleteAEvent(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  docId := vars["id"]
+
+  flaarumClient := office683_shared.GetFlaarumClient()
+  err := flaarumClient.DeleteRows(fmt.Sprintf(`
+    table: events
+    where:
+      id = %s
+    `, docId))
+  if err != nil {
+    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  http.Redirect(w, r, "/events/", 307)
+
+}
