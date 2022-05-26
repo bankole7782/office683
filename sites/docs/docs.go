@@ -10,6 +10,7 @@ import (
   "path/filepath"
   "github.com/pkg/errors"
   "github.com/gorilla/mux"
+  "github.com/russross/blackfriday/v2"
   "github.com/bankole7782/office683/office683_shared"
 )
 
@@ -122,4 +123,51 @@ func saveDoc(w http.ResponseWriter, r *http.Request) {
     fmt.Println(err)
   }
   fmt.Fprintf(w, "ok")
+}
+
+
+func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  docId := vars["id"]
+
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    panic(err)
+  }
+
+  docPath := filepath.Join(rootPath, "docs", docId + ".md")
+
+  flaarumClient := office683_shared.GetFlaarumClient()
+  docRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+    table: docs
+    where:
+      id = %s
+    `, docId))
+  if err != nil {
+    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  docDetails := map[string]string {
+    "doc_title": (*docRow)["doc_title"].(string),
+    "folder": (*docRow)["folder"].(string),
+    "updated": (*docRow)["update_dt"].(time.Time).String(),
+  }
+
+  rawDoc, err := os.ReadFile(docPath)
+  if err != nil {
+    ErrorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  renderedDocRaw := blackfriday.Run(rawDoc)
+  renderedDoc := template.HTML(string(renderedDocRaw))
+
+  type Context struct {
+    RenderedDoc template.HTML
+    DocDetails map[string]string
+    DocId string
+  }
+
+  tmpl := template.Must(template.ParseFS(content, "templates/render_doc.html"))
+  tmpl.Execute(w, Context{renderedDoc, docDetails, docId})
 }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script></script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    #header {
+      width: fit-content;
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+
+    #doc {
+      width: 960px;
+      margin: 10px auto;
+      border: 1px solid gray;
+      border-radius: 6px;
+      padding: 20px;
+    }
+  </style>
+  <title>{{.DocDetails.doc_title}} | Docs | office683 </title>
+</head>
+<body>
+  <div id="header">
+    <span>Docs</span>
+    <span>Doc Title: <b>{{.DocDetails.doc_title}}</b> </span>
+    <a href="/update_doc/{{.DocId}}">Edit Document</a>
+  </div>
+  <div id="doc">
+    {{.RenderedDoc}}
+  </div>
+</body>
+</html>
