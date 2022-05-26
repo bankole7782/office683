@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+  <title>Enter Upcoming Event | Office683 </title>
+  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script src="/gs/autosize.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $("#nav_signin").addClass("active");
+    autosize($("textarea"));
+  })
+  </script>
+
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+      width: 960px;
+      margin: 0 auto;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3, h4, p {
+      margin: 5px 0px;
+    }
+    .a_doc {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .a_doc.active {
+      display:block;
+    }
+    #header {
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    .loud {
+      font-size: 1.5em;
+    }
+    #all_events {
+      margin-top: 20px;
+    }
+
+    .spacer {
+      margin-bottom: 15px;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    #end_dt_box {
+      display: none;
+    }
+
+    input[type=text], textarea {
+      border: 1px solid gray;
+      width: 300px;
+    }
+    @media (min-width: 300px) {
+      .boxes {
+        width: 100%;
+        margin-top: 20px;
+      }
+    }
+
+    @media (min-width: 600px) {
+      .boxes {
+        width: calc(95% / 2);
+        float: left;
+      }
+
+      .boxes {
+        /* margin-left: 5%; */
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div id="header">
+    <span class="loud">New Event</span>
+    <a href="/">Office683 Home</a>
+    <a href="/events">Back to Events</a>
+  </div>
+
+  <div id="container">
+    <h1>New Event </h1>
+
+    <form method="post">
+      <div class="spacer">
+        <label>Title:</label>
+        <input type="text" id="input_title" name="title" required/>
+      </div>
+
+      <div class="spacer">
+        <h2>Date and Time Information</h2>
+
+        <div class="boxes">
+          <label>Event's Begin Date</label><br>
+          <input type="date" name="begin_date" required /><br>
+          <label>Event's End Date</label><br>
+          <input type="date" name="end_date" required />
+        </div>
+        <div class="boxes">
+          <label>Event's Begin Time</label><br>
+          <input type="time" name="begin_time" required /><br>
+          <label>Event's End Time</label><br>
+          <input type="time" name="end_time" required />
+        </div>
+        <div class="clear"></div>
+      </div>
+
+      <div class="spacer">
+        <h2>Notes on the Events</h2>
+
+        <div class="boxes">
+          <div><label>Event's Description </label></div>
+          <div><textarea name="event_description"></textarea></div>
+        </div>
+        <div class="boxes">
+          <div><label>What to Prepare</label></div>
+          <div><textarea name="event_preparation"></textarea></div>
+        </div>
+        <div class="clear"></div>
+
+      </div>
+      <div class="spacer">
+        <input type="submit" value="Enter Upcoming Event" />
+      </div>
+    </form>
+  </div>
+</body>
+</html>

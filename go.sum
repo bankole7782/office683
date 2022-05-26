@@ -190,6 +190,8 @@ github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/saenuma/flaarum v1.8.6 h1:hYusMlcw/GBzxRdkgWRGPrUOAXrHm14oMjCrvzmesBY=
 github.com/saenuma/flaarum v1.8.6/go.mod h1:9nf94s2aOv438nKktUwI8SIg+carmHhlivqlgi5RyCM=
+github.com/saenuma/flaarum v1.8.7 h1:8XiuvrHaBRaNrR4TV/btaLto2n3g/wOh3yLQjBA7dGQ=
+github.com/saenuma/flaarum v1.8.7/go.mod h1:9nf94s2aOv438nKktUwI8SIg+carmHhlivqlgi5RyCM=
 github.com/saenuma/mof v1.0.1/go.mod h1:2sIofUJXAoN1GB44qyuLLFyLvNb2lPe+a6GKX0D/wiU=
 github.com/saenuma/zazabul v1.1.4 h1:tVzr+yeGCBU/8Xc5S9iBLdwoJIDw4dyGUiPokHRAO24=
 github.com/saenuma/zazabul v1.1.4/go.mod h1:So2GPJYEbfm5PXuHmhyjSfG1JH8oEamRWOi3aLdN0q4=

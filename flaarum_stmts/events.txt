@@ -1,0 +1,10 @@
+table: events
+fields:
+  title string required
+  begin_date date required
+  begin_time string required
+  end_time string required
+  end_date date required
+  event_description text
+  event_preparation text
+::

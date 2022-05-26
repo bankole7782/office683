@@ -9,6 +9,7 @@ import (
   "github.com/gorilla/mux"
   "github.com/bankole7782/office683/office683_shared"
   "github.com/bankole7782/office683/sites/docs"
+  "github.com/bankole7782/office683/sites/events"
 )
 
 func main() {
@@ -34,12 +35,19 @@ func main() {
       panic(err)
     }
     w.Header().Set("Content-Disposition", "attachment; filename=" + vars["obj"])
-    contentType := http.DetectContentType(rawObj)
-    w.Header().Set("Content-Type", contentType)
+    ext := vars["obj"][len(vars["obj"])-3:]
+    if ext == ".js" {
+      w.Header().Set("Content-Type", "text/javascript")
+    } else {
+      contentType := http.DetectContentType(rawObj)
+      w.Header().Set("Content-Type", contentType)
+    }
     w.Write(rawObj)
   })
 
+  // attach handlers
   docs.AddHandlers(r)
+  events.AddHandlers(r)
 
   fmt.Println("Running docs @ http://127.0.0.1:8080")
 

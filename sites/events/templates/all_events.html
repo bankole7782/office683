@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <title>Events | Office683 </title>
+  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+
+    })
+  </script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+      width: 960px;
+      margin: 0 auto;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    input[type=text] {
+      width: 300px;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3, h4, p {
+      margin: 5px 0px;
+    }
+    #header {
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    .loud {
+      font-size: 1.5em;
+    }
+    #all_events {
+      margin-top: 20px;
+    }
+    .a_event {
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 300px) {
+      .boxes {
+        width: 100%;
+        margin-top: 20px;
+      }
+    }
+
+    @media (min-width: 600px) {
+      .boxes {
+        width: calc(95% / 2);
+        float: left;
+      }
+
+      .boxes {
+        /* margin-left: 5%; */
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div id="header">
+    <span class="loud">All Events</span>
+    <a href="/">Office683 Home</a>
+    <a href="/new_event">Enter Upcoming Event</a>
+  </div>
+
+  <div id="all_events" class="spacer">
+    <div class="boxes">
+      <h2>Past Events </h2>
+      {{range .OldEvents}}
+        <div class="a_event">
+          <p>Event Name: <b>{{.title}}</b></p>
+          <p>Event Begin Date: <b>{{.begin_date}}</b></p>
+          <a href="/event/{{.id}}">More details</a>
+        </div>
+      {{end}}
+    </div>
+
+    <div class="boxes">
+      <h2>Upcoming Events</h2>
+      {{range .Events}}
+        <div class="a_event">
+          <p>Event Name: <b>{{.title}}</b></p>
+          <p>Event Begin Date: <b>{{.begin_date}}</b></p>
+          <a href="/event/{{.id}}">More details</a>
+          &nbsp;&nbsp;&nbsp;
+          <a href="/edit_event/{{.id}}">Edit Event</a>
+        </div>
+      {{end}}
+    </div>
+    <div style="clear:both;"></div>
+
+  </div>
+<!--
+  <dialog id="delete_doc_dialog">
+    <p id="delete_msg"></p>
+    <span id="docid_span" style="display:none;"></span>
+    <button id="true_delete_btn">Delete</button>
+    &nbsp;&nbsp;&nbsp;
+    <button id="cancel_doc_dialog">Cancel</button>
+  </dialog> -->
+</body>
+</html>

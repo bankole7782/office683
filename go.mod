@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/pkg/errors v0.9.1
 	github.com/russross/blackfriday/v2 v2.1.0
-	github.com/saenuma/flaarum v1.8.6
+	github.com/saenuma/flaarum v1.8.7
 )
 
 require (
