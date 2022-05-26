@@ -215,11 +215,16 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
     "updated": (*docRow)["update_dt"].(time.Time).String(),
   }
 
-  rawDoc, err := os.ReadFile(docPath)
-  if err != nil {
-    ErrorPage(w, errors.Wrap(err, "os error"))
-    return
+  var rawDoc []byte
+  if office683_shared.DoesPathExists(docPath) {
+    rawDoc2, err := os.ReadFile(docPath)
+    if err != nil {
+      ErrorPage(w, errors.Wrap(err, "os error"))
+      return
+    }
+    rawDoc = rawDoc2
   }
+
   renderedDocRaw := blackfriday.Run(rawDoc)
   renderedDoc := template.HTML(string(renderedDocRaw))
 
