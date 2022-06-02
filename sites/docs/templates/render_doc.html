@@ -3,6 +3,27 @@
 <head>
   <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
   <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+
+    $("#view_para_numbers").click(function(e) {
+      if ( $(e.target).data("done") == "true" ) {
+        $("#doc p").removeClass("small_margin");
+        $(e.target).data("done", "false");
+        $(".p_num").remove();
+        $(e.target).text("Show paragraph numbers")
+      } else {
+        $("#doc p").each(function(i, el) {
+          $(el).html("<span class='p_num'>" + (i+1).toString() + ".</span>&nbsp;&nbsp;" + $(el).html());
+        });
+        $("#doc p").addClass("small_margin")
+        $(e.target).data("done", "true");
+        $(e.target).text("Hide paragraph numbers");
+      }
+    })
+
+  })
+  </script>
   <script></script>
   <style>
     @font-face {
@@ -33,6 +54,12 @@
     #doc img {
       max-width: 100%;
     }
+    .small_margin {
+      margin-top: 0px;
+    }
+    .p_num {
+      color: #888;
+    }
   </style>
   <title>{{.DocDetails.doc_title}} | Docs | office683 </title>
 </head>
@@ -41,6 +68,7 @@
     <span>Docs</span>
     <a href="/">All Docs</a>
     <span>Doc Title: <b>{{.DocDetails.doc_title}}</b> </span>
+    <a href="#" id="view_para_numbers" data-done="false">Show Paragraph Numbers</a>
     <a href="/update_doc/{{.DocId}}">Edit Document</a>
   </div>
   <div id="doc">
