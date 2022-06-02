@@ -14,7 +14,7 @@
         $(e.target).text("Show paragraph numbers")
       } else {
         $("#doc p").each(function(i, el) {
-          $(el).html("<span class='p_num'>" + (i+1).toString() + ".</span>&nbsp;&nbsp;" + $(el).html());
+          $(el).html("<span class='p_num'>" + (i+1).toString() + ". &nbsp;&nbsp;</span>" + $(el).html());
         });
         $("#doc p").addClass("small_margin")
         $(e.target).data("done", "true");
