@@ -67,6 +67,9 @@
     #end_dt_box {
       display: none;
     }
+    .el {
+      margin-left: 20px;
+    }
 
     input[type=text], textarea {
       border: 1px solid gray;
@@ -102,18 +105,18 @@
   <div id="container">
     <h1>Event's Title: {{.Event.title}} </h1>
     <h2>Period</h2>
-    <p> Begin: {{.Event.begin_date}} Time: {{.Event.begin_time}} </p>
-    <p> End: {{.Event.end_date}} Time: {{.Event.end_time}} </p>
-    {{$tv1 := call $.IsNotEmpty .Event.desc}}
-    {{if $tv1}}
+    <p class="el"> Begin: {{.Event.begin_date}} Time: {{.Event.begin_time}} </p>
+    <p class="el"> End: {{.Event.end_date}} Time: {{.Event.end_time}} </p>
+    {{if .HasEventDesc}}
       <h2>Description</h2>
-      {{.Event.desc}}
+      <div class="el">
+        {{.EventDesc}}
+      </div>
     {{end}}
 
-    {{$tv2 := call $.IsNotEmpty .Event.preps}}
-    {{if $tv2}}
+    {{if .HasEventPreps}}
       <h2>Preparations</h2>
-      <p>{{.Event.preps}}</p>
+      <div class="el">{{.EventPreps}}</div>
     {{end}}
 
   </div>

@@ -18,7 +18,6 @@ func allEvents(w http.ResponseWriter, r *http.Request) {
   rows, err := flaarumClient.Search(`
     table: events
     order_by: begin_date asc
-    limit: 100
     `)
   if err != nil {
     ErrorPage(w, errors.Wrap(err, "flaarum search error"))
@@ -79,6 +78,12 @@ func newEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func doNewLines(s string) string {
+  retStr := strings.ReplaceAll(s, "\r\n", "<br>")
+  retStr = strings.ReplaceAll(retStr, "\n", "<br>")
+  return retStr
+}
+
 func aEvent(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   docId := vars["id"]
@@ -101,21 +106,26 @@ func aEvent(w http.ResponseWriter, r *http.Request) {
     "end_date": (*eventRow)["end_date"].(time.Time).Format("2006-01-02"),
     "begin_time": (*eventRow)["begin_time"].(string),
     "end_time": (*eventRow)["end_time"].(string),
-    "desc": "",
-    "preps": "",
   }
 
+  evtDesc := ""
   if (*eventRow)["event_description"] != nil {
-    eventDetails["desc"] = (*eventRow)["event_description"].(string)
+    evtDesc = (*eventRow)["event_description"].(string)
+    evtDesc = doNewLines(evtDesc)
   }
 
+  evtPrep := ""
   if (*eventRow)["event_preparation"] != nil {
-    eventDetails["preps"] = (*eventRow)["event_preparation"].(string)
+    evtPrep = (*eventRow)["event_preparation"].(string)
+    evtPrep = doNewLines(evtPrep)
   }
 
   type Context struct {
     Event map[string]string
-    IsNotEmpty func(string) bool
+    HasEventDesc bool
+    HasEventPreps bool
+    EventDesc template.HTML
+    EventPreps template.HTML
   }
 
   ine := func(s string) bool {
@@ -123,7 +133,7 @@ func aEvent(w http.ResponseWriter, r *http.Request) {
   }
 
   tmpl := template.Must(template.ParseFS(content, "templates/a_event.html"))
-  tmpl.Execute(w, Context{eventDetails, ine})
+  tmpl.Execute(w, Context{eventDetails, ine(evtDesc), ine(evtPrep), template.HTML(evtDesc), template.HTML(evtPrep)})
 }
 
 
