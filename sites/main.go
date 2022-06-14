@@ -8,6 +8,7 @@ import (
   "html/template"
   "github.com/gorilla/mux"
   "github.com/bankole7782/office683/office683_shared"
+  "github.com/bankole7782/office683/sites/auths"
   "github.com/bankole7782/office683/sites/docs"
   "github.com/bankole7782/office683/sites/events"
 )
@@ -71,6 +72,7 @@ func main() {
   // attach handlers
   docs.AddHandlers(r)
   events.AddHandlers(r)
+  auths.AddHandlers(r)
 
   fmt.Println("Running office683 @ http://127.0.0.1:8080")
 

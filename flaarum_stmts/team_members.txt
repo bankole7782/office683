@@ -1,0 +1,9 @@
+table: team_members
+fields:
+  teamid int required
+  userid int required
+::
+foreign_keys:
+  teamid teams on_delete_delete
+  userid users on_delete_delete
+::

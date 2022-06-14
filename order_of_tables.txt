@@ -1,0 +1,7 @@
+users
+sessions
+teams
+team_members
+docs_images
+docs
+events

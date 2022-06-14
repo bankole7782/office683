@@ -1,0 +1,5 @@
+table: teams
+fields:
+  team_name string required
+  desc text required
+::

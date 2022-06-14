@@ -1,0 +1,8 @@
+table: users
+fields:
+  firstname string required
+  surname string required
+  email email required
+  password string required
+  registration_dt datetime
+::

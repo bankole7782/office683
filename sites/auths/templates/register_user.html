@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+
+  <title>Register User | Office683</title>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    .spacer {
+      margin-bottom: 15px;
+    }
+
+    #input_title {
+      width: 100%;
+    }
+    input {
+      width: 350px;
+      padding: 2px 5px;
+    }
+    input[type=submit] {
+      width: auto;
+      font-size:1.2em;
+      margin-top: 10px;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    #end_dt_box {
+      display: none;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    @media (min-width: 300px) {
+      .boxes {
+        width: 100%;
+        margin-top: 20px;
+      }
+    }
+
+    @media (min-width: 600px) {
+      .boxes {
+        width: calc(95% / 2);
+        float: left;
+      }
+
+      .boxes {
+        margin-left: 2%;
+      }
+    }
+
+  </style>
+
+</head>
+<body>
+  <h1> Register User</h1>
+
+  <form method="post">
+    <div class="boxes">
+
+      <div class="spacer">
+        <label>Firstname:</label><br>
+        <input type="text" name="firstname" autocomplete="off" required/>
+      </div>
+
+      <div class="spacer">
+        <label>Surname</label><br>
+        <input type="text" name="surname" autocomplete="off" required />
+      </div>
+
+      <div class="spacer">
+        <label>Email:</label><br>
+        <input type="email" name="email" autocomplete="off" required />
+      </div>
+    </div>
+
+    <div class="boxes">
+
+      <div class="spacer">
+        <label>Password</label><br>
+        <input type="password" name="password" required />
+      </div>
+
+      <div class="spacer">
+        <label>Confirm Password</label><br>
+        <input type="password" name="cpassword" required />
+      </div>
+
+      <div class="spacer">
+        <label>Admin Password</label><br>
+        <input type="password" name="apassword" required />
+      </div>
+    </div>
+    <div class="clear"></div>
+
+    <div style="width: fit-content; margin:0 auto;">
+      <input type="submit" value="Register User"  />
+    </div>
+  </form>
+</body>
+</html>
