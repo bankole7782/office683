@@ -13,6 +13,7 @@ import (
 func AddHandlers(r *mux.Router) {
   // documents
   r.HandleFunc("/register", registerUser)
+  r.HandleFunc("/signin", signInHandler)
 }
 
 
