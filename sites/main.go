@@ -48,13 +48,16 @@ func main() {
   })
 
   r.HandleFunc("/programs", func(w http.ResponseWriter, r *http.Request) {
-    status, _ := office683_shared.IsLoggedInUser(r)
+    status, userDetails := office683_shared.IsLoggedInUser(r)
     if status == false {
       http.Redirect(w, r, "/", 307)
       return
     }
+    type Context struct {
+      Fullname string
+    }
     tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/programs.html"))
-    tmpl.Execute(w, nil)
+    tmpl.Execute(w, Context{userDetails["firstname"].(string) + " " + userDetails["surname"].(string)})
   })
 
   r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {

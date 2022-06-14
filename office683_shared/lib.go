@@ -122,7 +122,7 @@ func IsLoggedInUser(r *http.Request) (bool, map[string]any) {
   }
 
   sessionRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
-    table: sessions
+    table: sessions expand
     where:
       keystr = '%s'
     `, cookie.Value))
@@ -131,7 +131,12 @@ func IsLoggedInUser(r *http.Request) (bool, map[string]any) {
     return false, nil
   }
 
-  return true, *sessionRow
+  return true, map[string]any {
+    "firstname": (*sessionRow)["userid.firstname"],
+    "surname": (*sessionRow)["userid.surname"],
+    "email": (*sessionRow)["userid.email"],
+    "registration_dt": (*sessionRow)["userid.registration_dt"],
+  }
 }
 
 
