@@ -7,6 +7,9 @@ import (
   "github.com/pkg/errors"
   "math/rand"
   "time"
+  "strings"
+  "html/template"
+  "net/http"
   "github.com/saenuma/flaarum"
   "github.com/saenuma/zazabul"
 )
@@ -93,4 +96,54 @@ func GetInstallationConfig() (zazabul.Config, error) {
   }
 
   return conf, nil
+}
+
+
+func IsLoggedInUser(r *http.Request) (bool, int64) {
+  cookie, err := r.Cookie("thingy_thing")
+  if err != nil {
+    return false, 0
+  }
+
+  flaarumClient := GetFlaarumClient()
+
+  count, err := flaarumClient.CountRows(fmt.Sprintf(`
+    table: sessions
+    where:
+      keystr = '%s'
+    `, cookie.Value))
+  if err != nil {
+    fmt.Println(err)
+    return false, 0
+  }
+
+  if count == 0 {
+    return false, 0
+  }
+
+  sessionRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+    table: sessions
+    where:
+      keystr = '%s'
+    `, cookie.Value))
+  if err != nil {
+    fmt.Println(err)
+    return false, 0
+  }
+
+  return true, (*sessionRow)["userid"].(int64)
+}
+
+
+func ErrorPage(w http.ResponseWriter, err error) {
+	type Context struct {
+		Msg template.HTML
+	}
+	msg := fmt.Sprintf("%+v", err)
+	fmt.Println(msg)
+	msg = strings.ReplaceAll(msg, "\n", "<br>")
+	msg = strings.ReplaceAll(msg, " ", "&nbsp;")
+	msg = strings.ReplaceAll(msg, "\t", "&nbsp;&nbsp;")
+	tmpl := template.Must(template.ParseFS(Content, "templates/error.html"))
+	tmpl.Execute(w, Context{template.HTML(msg)})
 }

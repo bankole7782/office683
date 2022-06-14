@@ -18,23 +18,23 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
   } else {
     conf, err := office683_shared.GetInstallationConfig()
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "zazabul error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "zazabul error"))
       return
     }
 
     if r.FormValue("apassword") != conf.Get("admin_pass") {
-      ErrorPage(w, errors.New("The admin password is invalid."))
+      office683_shared.ErrorPage(w, errors.New("The admin password is invalid."))
       return
     }
 
     if r.FormValue("password") != r.FormValue("cpassword") {
-      ErrorPage(w, errors.New("The two passwords don't match"))
+      office683_shared.ErrorPage(w, errors.New("The two passwords don't match"))
       return
     }
 
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(r.FormValue("password")), bcrypt.DefaultCost)
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "bcrypt error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "bcrypt error"))
       return
     }
 
@@ -47,7 +47,7 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
     })
 
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "flaarum error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
       return
     }
 
@@ -92,14 +92,14 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
         email = '%s'
       `, email))
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "flaarum error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
       return
     }
 
     databasePassword := (*userRow)["password"].(string)
     err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(password))
     if err != nil {
-      ErrorPage(w, errors.New("Invalid Credentials"))
+      office683_shared.ErrorPage(w, errors.New("Invalid Credentials"))
       return
     }
 
@@ -111,7 +111,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
       "userid": (*userRow)["id"].(int64),
     })
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "flaarum error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
       return
     }
 

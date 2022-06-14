@@ -48,6 +48,11 @@ func main() {
   })
 
   r.HandleFunc("/programs", func(w http.ResponseWriter, r *http.Request) {
+    status, _ := office683_shared.IsLoggedInUser(r)
+    if status == false {
+      http.Redirect(w, r, "/", 307)
+      return
+    }
     tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/programs.html"))
     tmpl.Execute(w, nil)
   })
