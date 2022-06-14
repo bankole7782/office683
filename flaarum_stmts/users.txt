@@ -2,7 +2,7 @@ table: users
 fields:
   firstname string required
   surname string required
-  email email required
+  email email required unique
   password string required
   registration_dt datetime
 ::

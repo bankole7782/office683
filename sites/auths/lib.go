@@ -6,6 +6,7 @@ import (
   "fmt"
   "html/template"
   "strings"
+  "github.com/bankole7782/office683/office683_shared"
 )
 
 
@@ -24,6 +25,6 @@ func ErrorPage(w http.ResponseWriter, err error) {
 	msg = strings.ReplaceAll(msg, "\n", "<br>")
 	msg = strings.ReplaceAll(msg, " ", "&nbsp;")
 	msg = strings.ReplaceAll(msg, "\t", "&nbsp;&nbsp;")
-	tmpl := template.Must(template.ParseFS(content, "templates/error.html"))
+	tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/error.html"))
 	tmpl.Execute(w, Context{template.HTML(msg)})
 }
