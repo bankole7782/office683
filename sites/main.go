@@ -12,6 +12,7 @@ import (
   "github.com/bankole7782/office683/sites/events"
 )
 
+
 func main() {
   rootPath, err := office683_shared.GetRootPath()
   if err != nil {
@@ -21,10 +22,32 @@ func main() {
   os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
   os.MkdirAll(filepath.Join(rootPath, "docs_images"), 0777)
 
+  conf, err := office683_shared.GetInstallationConfig()
+  if err != nil {
+    panic(err)
+  }
+
   r := mux.NewRouter()
 
   r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    type Context struct {
+      CompanyName string
+      CompanyLogoPath string
+      AdminEmail string
+      Msg string
+    }
+
+    ctx := Context {
+      CompanyName: conf.Get("company_name"), CompanyLogoPath: conf.Get("company_logo"),
+      AdminEmail: conf.Get("admin_email"),
+    }
+
     tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/home.html"))
+    tmpl.Execute(w, ctx)
+  })
+
+  r.HandleFunc("/programs", func(w http.ResponseWriter, r *http.Request) {
+    tmpl := template.Must(template.ParseFS(office683_shared.Content, "templates/programs.html"))
     tmpl.Execute(w, nil)
   })
 
@@ -49,7 +72,7 @@ func main() {
   docs.AddHandlers(r)
   events.AddHandlers(r)
 
-  fmt.Println("Running docs @ http://127.0.0.1:8080")
+  fmt.Println("Running office683 @ http://127.0.0.1:8080")
 
   err = http.ListenAndServe(":8080", r)
   if err != nil {

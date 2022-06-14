@@ -1,88 +1,130 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+<html lang="en-us">
+<head>
+  <title>Office Tools | Office683 </title>
+  <meta charset="utf-8">
 
-    <title>Office683 | All Programs</title>
-    <style>
-      @font-face {
-        font-family: "Quicksand";
-        src: url("/gs/Quicksand-Regular.ttf");
-      }
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: "Quicksand", sans-serif;
+    }
+    a, a:visited {
+      color: #1645AD;
+    }
+    p.error {
+      background-color: red;
+      color: #fff;
+      padding: 10px;
+    }
+    h1, h2, h3 {
+      margin: 10px;
+    }
+    ol, li, p, form {
+      margin: 10px;
+    }
+    #header span {
+      font-size: 2em;
+      float: left;
+      font-weight: bold;
+      margin-top: 40px;
+    }
+    #header img {
+      float: left;
+      width: 100px;
+    }
+
+    input, select, textarea {
+      font-family: "Quicksand", sans-serif;
+      font-size: 1em;
+      padding: 5px;
+      width: 200px;
+      border: 1px solid #0A3C23;
+      border-radius: 3px;
+    }
+    button {
+      font-family: "Quicksand", sans-serif;
+    }
+    input[type=submit], input[type=checkbox], input[type=radio] {
+      width: auto;
+      padding: 5px 20px;
+      font-size: 1em;
+    }
+
+    @media (min-width: 300px) {
       body {
-        font-family: Quicksand;
-        width: 960px;
-        margin: 0 auto;
+        width: auto;
+        margin: 10px;
       }
-      input, button {
-        font-family: Quicksand;
-      }
-      #logo {
-        width: 120px;
-      }
-      #header * {
-        float: left;
-      }
-      #header .loud {
-        font-size: 2em;
-        font-weight: bold;
-        padding-left: 20px;
+
+      #about_box, #enter_box {
+        width: 100%;
         margin-top: 20px;
       }
+    }
 
-      .a_program h3 {
-        width: 150px;
+    @media (min-width: 600px) {
+      body {
+        width: 1000px;
+        margin: 0px auto;
+      }
+      #about_box {
+        width: 600px;
         float: left;
-        margin: 20px;
+        margin-right: 40px;
       }
-      .a_program p {
-        margin-left: 20px;
+      #enter_box {
+        width: 300px;
+        float: left;
+        padding: 20px;
+        border: 1px solid green;
+        border-radius: 6px;
+        margin-top: 100px;
       }
-      .a_program {
-        border: 1px solid gray;
-        cursor: pointer;
-      }
-      .a_program:hover {
-        color: blue;
-      }
-    </style>
+    }
 
-    <script src="/gs/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function(e) {
-      $(".a_program *").click(function(e) {
-        var aProgramDiv = $(e.target).parents(".a_program")
-        location.href = $(aProgramDiv).data("href")
-      })
-    })
-    </script>
-  </head>
-  <body>
+  </style>
+</head>
+<body>
+  <div id="about_box" class="boxes">
     <div id="header">
-      <img id="logo" src="/gs/office683_logo.png" alt="logo" />
-      <span class="loud">Office683 | A set of office tools</span>
+      <img src="{{.CompanyLogoPath}}" alt="company logo" />
+      <span>{{.CompanyName}}</span>
     </div>
-    <div style="clear: both"></div>
-    <h2>All Programs</h2>
+    <div style="clear: both; margin-bottom: 20px"></div>
 
-    <div class="a_program" data-href="/docs/">
-      <h3>Documents</h3>
-      <p>A documents editor. It uses markdown. Its not like Microsoft Word.</p>
-    </div>
-    <div style="clear: both"></div>
+    <h2>This is the Office683 Installation for {{.CompanyName}}</h2>
 
-    <div class="a_program" data-href="/events/">
-      <h3>Events</h3>
-      <p>A Record of Events. Prepares workers for future events and keeps memories of past events.</p>
-    </div>
-    <div style="clear: both"></div>
+    <p>It provides a set of tools for quick and easy office administration</p>
+  </div>
 
-    <div class="a_program" data-href="/sheets/">
-      <h3>Spreadsheets</h3>
-      <p>A spreadsheet. Prepare your cost estimates etc in this program.</p>
-    </div>
-    <div style="clear: both"></div>
+  <div id="enter_box" class="boxes">
+    <h2>Signin Form</h2>
+    <br>
+    <p>If you need an account, please contact us via <b>{{.AdminEmail}}</b></p>
 
-  </body>
+    {{if .Msg}}
+      <p class="error">{{.Msg}}</p>
+    {{end}}
+    <form method="post" action="/signin">
+      <div><label>Email</label> </div>
+      <div><input type="email" name="email" autocomplete="off" /> </div>
+      <br>
+
+      <div> <label>Password</label></div>
+      <div><input type="password" name="password" /></div>
+      <br>
+
+      <div> <input type="submit" value="Signin" /> </div>
+    </form>
+
+  </div>
+
+</body>
 </html>

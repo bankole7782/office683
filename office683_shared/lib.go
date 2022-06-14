@@ -3,13 +3,13 @@ package office683_shared
 import (
   "os"
   "path/filepath"
-  // "strings"
+  "fmt"
   "github.com/pkg/errors"
   "math/rand"
   "time"
   "github.com/saenuma/flaarum"
+  "github.com/saenuma/zazabul"
 )
-
 
 
 func GetRootPath() (string, error) {
@@ -37,7 +37,7 @@ func GetRootPath() (string, error) {
 
 func UntestedRandomString(length int) string {
   var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
-  const charset = "abcdefghijklmnopqrstuvwxyz1234567890"
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
   b := make([]byte, length)
   for i := range b {
@@ -70,4 +70,27 @@ func GetFlaarumClient() flaarum.Client {
   }
 
   return flaarumClient
+}
+
+
+func GetInstallationConfig() (zazabul.Config, error) {
+  rootPath, err := GetRootPath()
+  if err != nil {
+    return zazabul.Config{}, err
+  }
+
+  confPath := filepath.Join(rootPath, "install.zconf")
+
+  conf, err := zazabul.LoadConfigFile(confPath)
+  if err != nil {
+    return zazabul.Config{}, errors.New(fmt.Sprintf("The file '%s' cannot be loaded.", confPath))
+  }
+
+  for _, item := range conf.Items {
+    if item.Value == "" {
+      return zazabul.Config{}, errors.New("Every field in the launch file is compulsory.")
+    }
+  }
+
+  return conf, nil
 }

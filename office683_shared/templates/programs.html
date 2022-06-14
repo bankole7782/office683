@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+
+    <title>Office683 | All Programs</title>
+    <style>
+      @font-face {
+        font-family: "Quicksand";
+        src: url("/gs/Quicksand-Regular.ttf");
+      }
+      body {
+        font-family: Quicksand;
+        width: 960px;
+        margin: 0 auto;
+      }
+      input, button {
+        font-family: Quicksand;
+      }
+      #logo {
+        width: 120px;
+      }
+      #header * {
+        float: left;
+      }
+      #header .loud {
+        font-size: 2em;
+        font-weight: bold;
+        padding-left: 20px;
+        margin-top: 20px;
+      }
+
+      .a_program h3 {
+        width: 150px;
+        float: left;
+        margin: 20px;
+      }
+      .a_program p {
+        margin-left: 20px;
+      }
+      .a_program {
+        border: 1px solid gray;
+        cursor: pointer;
+      }
+      .a_program:hover {
+        color: blue;
+      }
+    </style>
+
+    <script src="/gs/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function(e) {
+      $(".a_program *").click(function(e) {
+        var aProgramDiv = $(e.target).parents(".a_program")
+        location.href = $(aProgramDiv).data("href")
+      })
+    })
+    </script>
+  </head>
+  <body>
+    <div id="header">
+      <img id="logo" src="/gs/office683_logo.png" alt="logo" />
+      <span class="loud">Office683 | A set of office tools</span>
+    </div>
+    <div style="clear: both"></div>
+    <h2>All Programs</h2>
+
+    <div class="a_program" data-href="/docs/">
+      <h3>Documents</h3>
+      <p>A documents editor. It uses markdown. Its not like Microsoft Word.</p>
+    </div>
+    <div style="clear: both"></div>
+
+    <div class="a_program" data-href="/events/">
+      <h3>Events</h3>
+      <p>A Record of Events. Prepares workers for future events and keeps memories of past events.</p>
+    </div>
+    <div style="clear: both"></div>
+
+    <div class="a_program" data-href="/sheets/">
+      <h3>Spreadsheets</h3>
+      <p>A spreadsheet. Prepare your cost estimates etc in this program.</p>
+    </div>
+    <div style="clear: both"></div>
+
+  </body>
+</html>
