@@ -99,10 +99,10 @@ func GetInstallationConfig() (zazabul.Config, error) {
 }
 
 
-func IsLoggedInUser(r *http.Request) (bool, int64) {
+func IsLoggedInUser(r *http.Request) (bool, map[string]any) {
   cookie, err := r.Cookie("thingy_thing")
   if err != nil {
-    return false, 0
+    return false, nil
   }
 
   flaarumClient := GetFlaarumClient()
@@ -114,11 +114,11 @@ func IsLoggedInUser(r *http.Request) (bool, int64) {
     `, cookie.Value))
   if err != nil {
     fmt.Println(err)
-    return false, 0
+    return false, nil
   }
 
   if count == 0 {
-    return false, 0
+    return false, nil
   }
 
   sessionRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
@@ -128,10 +128,10 @@ func IsLoggedInUser(r *http.Request) (bool, int64) {
     `, cookie.Value))
   if err != nil {
     fmt.Println(err)
-    return false, 0
+    return false, nil
   }
 
-  return true, (*sessionRow)["userid"].(int64)
+  return true, *sessionRow
 }
 
 

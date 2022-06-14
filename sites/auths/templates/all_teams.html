@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <title>All Teams | Office683 </title>
+  <link rel="shortcut icon" type="image/png" href="/gs/office683_logo.png" />
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script src="/gs/autosize.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      autosize($("textarea"));
+
+      const ntDialog = document.getElementById('new_team_dialog');
+      const mtDialog = document.getElementById('manage_team_members_dialog');
+
+      $("#new_team_btn").click(function(e) {
+        ntDialog.showModal();
+      });
+
+      $(".manage_team_members_btn").click(function(e) {
+        $("#team_name_span").text($(e.target).data("teamname"));
+        $("input[name=team_id]").val( $(e.target).data("teamid") );
+        $("#manage_team_members_dialog input[type=checkbox]").prop("checked", false);
+        mtDialog.showModal();
+      })
+
+    })
+  </script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+      width: 960px;
+      margin: 0 auto;
+    }
+    input, button, textarea {
+      font-family: Quicksand;
+    }
+    input, textarea {
+      width: 300px;
+    }
+    input[type=submit], input[type=checkbox] {
+      width: auto;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+    #folders_pane, #docs_pane {
+      float: left;
+    }
+    #folders_pane {
+      width: 200px;
+    }
+    #docs_pane {
+      width: 400px;
+      margin-left: 20px;
+    }
+    h1, h2, h3, h4, p {
+      margin: 5px 0px;
+    }
+    #header {
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    .loud {
+      font-size: 1.5em;
+    }
+    #all_teams {
+      margin-top: 20px;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    @media (min-width: 300px) {
+      .a_team {
+        width: 100%;
+        margin-top: 20px;
+      }
+    }
+
+    @media (min-width: 600px) {
+      .a_team {
+        width: calc(95% / 2);
+        float: left;
+      }
+
+      .a_team {
+        margin-left: 2%;
+      }
+    }
+
+    .team_desc {
+      width: 170px;
+      float: left;
+    }
+    .team_members {
+      margin-left: 180px;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="header">
+    <span class="loud">All Teams</span>
+    <a href="/programs">Programs</a>
+    <button id="new_team_btn">New Team</button>
+  </div>
+
+  <div id="all_teams">
+    {{range $k, $v := .Teams}}
+      <div class="a_team">
+        <div class="team_desc">
+          <h3>Team #{{.id}}</h3>
+          <p>Team Name: <b>{{.team_name}}</b></p>
+          <p>Team Desc: <br>{{.desc}}</p>
+        </div>
+        <div class="team_members">
+          <h3>Team Members</h3>
+          {{$tid := .id}}
+          {{$members := index $.TeamMembers .team_name}}
+          {{range $members}}
+            <p>
+              {{.fullname}}
+            </p>
+          {{end}}
+          <button data-teamid="{{.id}}" data-teamname="{{.team_name}}" class="manage_team_members_btn">Manage</button>
+        </div>
+      </div>
+
+      {{$even := call $.IsEven $k}}
+      {{if $even}}
+        <div class="clear" style="clear:both"></div>
+      {{end}}
+    {{end}}
+  </div>
+
+  <dialog id="new_team_dialog">
+    <h3>New Team Dialog</h3>
+    <form method="post" action="/new_team">
+      <div>
+        <label>Enter Team Name</label><br>
+        <input type="text" name="team_name" required />
+      </div>
+      <div>
+        <label>Enter Team Description</label><br>
+        <textarea name="desc" required></textarea>
+      </div>
+      <div>
+        <label>Admin Password</label><br>
+        <input type="password" name="apassword" required />
+      </div>
+      <div>
+        <input type="submit" value="Create" />
+      </div>
+      <p class="help">Press <b>ESC</b> to dismiss</p>
+    </form>
+  </dialog>
+
+  <dialog id="manage_team_members_dialog">
+    <h3>Manage Team Members <span id="team_name_span"></span></h3>
+
+    <form method="post" action="/update_team_members">
+      <input type="hidden" name="team_id" />
+      <div>
+        {{range $.AllUsers}}
+          <label><input type="checkbox" name="member" value="{{.id}}" /> {{.firstname}} {{.surname}} </label><br>
+        {{end}}
+      </div>
+      <div>
+        <label>Admin Password</label><br>
+        <input type="password" name="apassword" required />
+      </div>
+      <div>
+        <input type="submit" value="Update" />
+      </div>
+    </form>
+
+    <p class="help">Press <b>ESC</b> to dismiss</p>
+  </dialog>
+
+</body>
+</html>

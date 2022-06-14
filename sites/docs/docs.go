@@ -107,8 +107,6 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
     FoldersToDocsMap map[string][]map[string]interface{}
   }
 
-
-
   tmpl := template.Must(template.ParseFS(content, "templates/all_docs.html"))
   tmpl.Execute(w, Context{folders, folderToDocsMap})
 }
