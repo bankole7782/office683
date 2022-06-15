@@ -154,7 +154,8 @@ func docsOfFolder(w http.ResponseWriter, r *http.Request) {
 
   rootPath, err := office683_shared.GetRootPath()
   if err != nil {
-    panic(err)
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
   }
 
   flaarumClient := office683_shared.GetFlaarumClient()

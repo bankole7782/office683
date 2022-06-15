@@ -12,6 +12,7 @@ import (
   "html/template"
   "github.com/pkg/errors"
   "github.com/gorilla/mux"
+  "github.com/dustin/go-humanize"
   "github.com/bankole7782/office683/office683_shared"
 )
 
@@ -55,6 +56,11 @@ func allFolders(w http.ResponseWriter, r *http.Request) {
   }
 
   flaarumClient := office683_shared.GetFlaarumClient()
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
 
   teamMembersRows, err := flaarumClient.Search(fmt.Sprintf(`
     table: team_members expand
@@ -91,13 +97,51 @@ func allFolders(w http.ResponseWriter, r *http.Request) {
     }
 
     teamName := row["teamid.team_name"].(string)
-    teamsToFolders[teamName] = *folderRows
+
+    tmpFoldersStuff := make([]map[string]any, 0)
     for _, frow := range *folderRows {
       teamsFolders = append(teamsFolders, map[string]any {
         "folder_name": frow["folder_name"], "team_name": frow["teamid.team_name"],
         "folderid": frow["id"], "teamid": frow["teamid"],
       })
+
+      containedFilesRows, err := flaarumClient.Search(fmt.Sprintf(`
+        table: cab_files
+        where:
+          folderid = %d
+        `, frow["id"].(int64)))
+      if err != nil {
+        office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+        return
+      }
+
+      var totalSize int64
+      for _, cfr := range *containedFilesRows {
+        cabFilePath := filepath.Join(rootPath, "cab", cfr["written_filename"].(string) + "." + cfr["format"].(string))
+        file, err := os.Open(cabFilePath)
+        if err != nil {
+          continue
+        }
+        defer file.Close()
+
+        stat, err := file.Stat()
+        if err != nil {
+          office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+          return
+        }
+
+        totalSize += stat.Size()
+      }
+
+      tmpFoldersStuff = append(tmpFoldersStuff, map[string]any{
+        "folder_name": frow["folder_name"], "id": frow["id"],
+        "children_count": len(*containedFilesRows),
+        "total_size":  humanize.Bytes(uint64(totalSize)),
+      })
     }
+
+    teamsToFolders[teamName] = tmpFoldersStuff
+
   }
 
   type Context struct {
@@ -124,10 +168,11 @@ func filesOfFolder(w http.ResponseWriter, r *http.Request) {
 
   flaarumClient := office683_shared.GetFlaarumClient()
 
-  // rootPath, err := office683_shared.GetRootPath()
-  // if err != nil {
-  //   panic(err)
-  // }
+  rootPath, err := office683_shared.GetRootPath()
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
 
   folderRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
     table: docs_folders expand
@@ -183,6 +228,32 @@ func filesOfFolder(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  files := make([]map[string]any, 0)
+  for _, fr := range *filesRows {
+    cabFilePath := filepath.Join(rootPath, "cab", fr["written_filename"].(string) + "." + fr["format"].(string))
+    file, err := os.Open(cabFilePath)
+    if err != nil {
+      continue
+    }
+    defer file.Close()
+
+    stat, err := file.Stat()
+    if err != nil {
+      office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+      return
+    }
+
+    fileSize := humanize.Bytes(uint64(stat.Size()))
+
+    files = append(files, map[string]any{
+      "written_filename": fr["written_filename"],
+      "original_name": fr["original_name"],
+      "format": fr["format"],
+      "upload_dt": fr["upload_dt"],
+      "file_size": fileSize,
+    })
+  }
+
   type Context struct {
     Folders []map[string]any
     FolderName string
@@ -192,7 +263,7 @@ func filesOfFolder(w http.ResponseWriter, r *http.Request) {
 
   tmpl := template.Must(template.ParseFS(content, "templates/files.html"))
   tmpl.Execute(w, Context{teamsFolders, (*folderRow)["folder_name"].(string),
-    (*folderRow)["teamid.team_name"].(string), *filesRows})
+    (*folderRow)["teamid.team_name"].(string), files})
 }
 
 
@@ -219,11 +290,7 @@ func createWrittenName() string {
 
 
 func uploadFile(w http.ResponseWriter, r *http.Request) {
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
-
+  rootPath, _ := office683_shared.GetRootPath()
   flaarumClient := office683_shared.GetFlaarumClient()
 
   // Maximum upload of 10 MB files

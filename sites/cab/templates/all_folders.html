@@ -16,6 +16,11 @@
         nfDialog.showModal();
       })
 
+      $(".a_folder *").click(function(e) {
+        var aDocDiv = $(e.target).parents(".a_folder")
+        location.href = $(aDocDiv).data("href")
+      })
+
     })
   </script>
   <style>
@@ -84,9 +89,17 @@
       margin-top: 20px;
     }
     .a_folder {
-      width: 200px;
+      min-width: 200px;
       float: left;
       margin-right: 20px;
+      border: 1px solid gray;
+      cursor: pointer;
+      padding: 20px;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+    .a_folder:hover {
+      border: 1px solid blue;
     }
   </style>
 
@@ -104,8 +117,10 @@
         <h3>{{.team_name}}'s Folders</h3>
         {{$folders := index $.TeamsToFolders .team_name}}
         {{range $folders}}
-          <div class="a_folder">
-            <a href="/cab/{{.id}}">{{.folder_name}}</a>
+          <div class="a_folder" data-href="/cab/{{.id}}">
+            <b>{{.folder_name}}</b><br>
+            <span>{{.children_count}} Files</span></br>
+            <span>{{.total_size}}</span><br>
           </div>
         {{end}}
       {{end}}
