@@ -229,6 +229,10 @@ func docsOfFolder(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  if ! office683_shared.BelongToThisTeam((*folderRow)["teamid"].(int64), userDetails["id"].(int64)) {
+    office683_shared.ErrorPage(w, errors.New("You are not a member of this team"))
+    return
+  }
 
   teamMembersRows, err := flaarumClient.Search(fmt.Sprintf(`
     table: team_members expand
@@ -289,7 +293,7 @@ func docsOfFolder(w http.ResponseWriter, r *http.Request) {
 
 
 func updateDoc(w http.ResponseWriter, r *http.Request) {
-  status, _ := office683_shared.IsLoggedInUser(r)
+  status, userDetails := office683_shared.IsLoggedInUser(r)
   if status == false {
     http.Redirect(w, r, "/", 307)
     return
@@ -306,6 +310,21 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
     `, docId))
   if err != nil {
     office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  folderRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+    table: docs_folders expand
+    where:
+      id = %d
+    `, (*docRow)["folderid"].(int64)))
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
+    return
+  }
+
+  if ! office683_shared.BelongToThisTeam((*folderRow)["teamid"].(int64), userDetails["id"].(int64)) {
+    office683_shared.ErrorPage(w, errors.New("You are not a member of this team"))
     return
   }
 
@@ -373,7 +392,7 @@ func saveDoc(w http.ResponseWriter, r *http.Request) {
 
 
 func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
-  status, _ := office683_shared.IsLoggedInUser(r)
+  status, userDetails := office683_shared.IsLoggedInUser(r)
 
   vars := mux.Vars(r)
   docId := vars["id"]
@@ -396,9 +415,27 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  if status == false && (*docRow)["public"] == false {
-    http.Redirect(w, r, "/", 307)
-    return
+  if (*docRow)["public"] == false {
+    if status == false {
+      http.Redirect(w, r, "/", 307)
+      return
+    }
+
+    folderRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+      table: docs_folders expand
+      where:
+      id = %d
+      `, (*docRow)["folderid"].(int64)))
+    if err != nil {
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
+      return
+    }
+
+    if ! office683_shared.BelongToThisTeam((*folderRow)["teamid"].(int64), userDetails["id"].(int64)) {
+      office683_shared.ErrorPage(w, errors.New("You are not a member of this team"))
+      return
+    }
+
   }
 
   docDetails := map[string]string {
@@ -427,37 +464,4 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
   tmpl := template.Must(template.ParseFS(content, "templates/render_doc.html"))
   tmpl.Execute(w, Context{renderedDoc, docDetails, docId})
-}
-
-
-func deleteDoc(w http.ResponseWriter, r *http.Request) {
-  status, _ := office683_shared.IsLoggedInUser(r)
-  if status == false {
-    http.Redirect(w, r, "/", 307)
-    return
-  }
-
-  vars := mux.Vars(r)
-  docId := vars["id"]
-
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
-
-  flaarumClient := office683_shared.GetFlaarumClient()
-  err = flaarumClient.DeleteRows(fmt.Sprintf(`
-    table: docs
-    where:
-      id = %s
-    `, docId))
-  if err != nil {
-    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
-    return
-  }
-
-  docPath := filepath.Join(rootPath, "docs", docId + ".md")
-  os.Remove(docPath)
-
-  fmt.Fprintf(w, "ok")
 }

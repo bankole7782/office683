@@ -175,12 +175,17 @@ func filesOfFolder(w http.ResponseWriter, r *http.Request) {
   }
 
   folderRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
-    table: docs_folders expand
+    table: cab_folders expand
     where:
       id = %s
     `, folderId))
   if err != nil {
     office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
+    return
+  }
+
+  if ! office683_shared.BelongToThisTeam((*folderRow)["teamid"].(int64), userDetails["id"].(int64)) {
+    office683_shared.ErrorPage(w, errors.New("You are not a member of this team"))
     return
   }
 

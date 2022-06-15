@@ -153,3 +153,26 @@ func ErrorPage(w http.ResponseWriter, err error) {
 	tmpl := template.Must(template.ParseFS(Content, "templates/error.html"))
 	tmpl.Execute(w, Context{template.HTML(msg)})
 }
+
+
+func BelongToThisTeam(teamid, userid int64) bool {
+  flaarumClient := GetFlaarumClient()
+
+  count, err := flaarumClient.CountRows(fmt.Sprintf(`
+    table: team_members
+    where:
+      teamid = %d
+      and userid = %d
+    `, teamid, userid))
+
+  if err != nil {
+    fmt.Println(err.Error())
+    return false
+  }
+
+  if count > 0 {
+    return true
+  }
+
+  return false
+}

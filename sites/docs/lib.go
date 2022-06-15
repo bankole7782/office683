@@ -15,7 +15,6 @@ func AddHandlers(r *mux.Router) {
   r.HandleFunc("/update_doc/{id}", updateDoc)
   r.HandleFunc("/save_doc/{id}", saveDoc)
   r.HandleFunc("/doc/{id}", viewRenderedDoc)
-  r.HandleFunc("/delete_doc_u89xe/{id}", deleteDoc)
 
   // gallery
   r.HandleFunc("/docs_images/", gallery)
