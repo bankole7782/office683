@@ -17,17 +17,29 @@ import (
 
 
 func newDocument(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   if r.Method == http.MethodPost {
     flaarumClient := office683_shared.GetFlaarumClient()
+    if r.FormValue("teamid") == "" {
+      office683_shared.ErrorPage(w, errors.New("The team must be selected."))
+      return
+    }
+    teamIdInt, _ := strconv.ParseInt(r.FormValue("teamid"), 10, 64)
     retId, err := flaarumClient.InsertRowAny("docs", map[string]interface{} {
       "doc_title": r.FormValue("doc_title"),
       "folder": r.FormValue("folder"),
       "update_dt": time.Now(),
       "public": false,
+      "teamid": teamIdInt,
     })
 
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "flaarum insert error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum insert error"))
       return
     }
 
@@ -38,19 +50,52 @@ func newDocument(w http.ResponseWriter, r *http.Request) {
 
 
 func allDocs(w http.ResponseWriter, r *http.Request) {
+  status, userDetails := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   rootPath, err := office683_shared.GetRootPath()
   if err != nil {
     panic(err)
   }
 
   flaarumClient := office683_shared.GetFlaarumClient()
+
+  teamMembersRows, err := flaarumClient.Search(fmt.Sprintf(`
+    table: team_members expand
+    order_by: teamid.team_name asc
+    fields: teamid.team_name teamid
+    where:
+      userid = %d
+    `, userDetails["id"]))
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum error"))
+    return
+  }
+
+  yourTeams := make([]map[string]any, 0)
+  yourTeamIds := make([]int64, 0)
+  for _, row := range *teamMembersRows {
+    elem := map[string]any {
+      "teamid": row["teamid"],
+      "team_name": row["teamid.team_name"],
+    }
+    yourTeams = append(yourTeams, elem)
+    yourTeamIds = append(yourTeamIds, row["teamid"].(int64))
+  }
+
+
+
+
   folderRows, err := flaarumClient.Search(`
     table: docs distinct
     fields: folder
     order_by: folder asc
     `)
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
   folders := make([]string, 0)
@@ -77,17 +122,25 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
 
         file, err := os.Open(docPath)
         if err != nil {
-          ErrorPage(w, errors.Wrap(err, "os error"))
+          office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
           return
         }
         defer file.Close()
 
         stat, err := file.Stat()
         if err != nil {
-          ErrorPage(w, errors.Wrap(err, "os error"))
+          office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
           return
         }
         docSize = humanize.Bytes(uint64(stat.Size()))
+      }
+
+      found := false
+      for _, yourTeamId := range yourTeamIds {
+        if yourTeamId == docRow["teamid"].(int64) {
+          found = true
+          break
+        }
       }
 
       elems = append(elems, map[string]interface{} {
@@ -95,6 +148,7 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
         "updated": docRow["update_dt"],
         "id": docRow["id"],
         "doc_size": docSize,
+        "editable": found == true,
       })
 
     }
@@ -104,15 +158,22 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
 
   type Context struct {
     Folders []string
-    FoldersToDocsMap map[string][]map[string]interface{}
+    FoldersToDocsMap map[string][]map[string]any
+    YourTeams []map[string]any
   }
 
   tmpl := template.Must(template.ParseFS(content, "templates/all_docs.html"))
-  tmpl.Execute(w, Context{folders, folderToDocsMap})
+  tmpl.Execute(w, Context{folders, folderToDocsMap, yourTeams})
 }
 
 
 func updateDoc(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   vars := mux.Vars(r)
   docId := vars["id"]
 
@@ -123,7 +184,7 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
       id = %s
     `, docId))
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 
@@ -142,7 +203,7 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
   if office683_shared.DoesPathExists(docPath) {
     raw, err := os.ReadFile(docPath)
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "os error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
       return
     }
     rawDoc = string(raw)
@@ -159,6 +220,12 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
 
 
 func saveDoc(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   vars := mux.Vars(r)
   docId := vars["id"]
 
@@ -186,6 +253,8 @@ func saveDoc(w http.ResponseWriter, r *http.Request) {
 
 
 func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+
   vars := mux.Vars(r)
   docId := vars["id"]
 
@@ -203,7 +272,12 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
       id = %s
     `, docId))
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  if status == false && (*docRow)["public"] == false {
+    http.Redirect(w, r, "/", 307)
     return
   }
 
@@ -217,7 +291,7 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
   if office683_shared.DoesPathExists(docPath) {
     rawDoc2, err := os.ReadFile(docPath)
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "os error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
       return
     }
     rawDoc = rawDoc2
@@ -238,6 +312,12 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
 
 func deleteDoc(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   vars := mux.Vars(r)
   docId := vars["id"]
 
@@ -253,7 +333,7 @@ func deleteDoc(w http.ResponseWriter, r *http.Request) {
       id = %s
     `, docId))
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 

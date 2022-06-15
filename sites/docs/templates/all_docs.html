@@ -127,7 +127,7 @@
 <body>
   <div id="header">
     <span class="loud">All Documents</span>
-    <a href="/">Office683 Home</a>
+    <a href="/programs">Programs</a>
     <button id="new_doc_btn">New Document</button>
     <a href="/docs_images/">Images for Documents</a>
   </div>
@@ -156,7 +156,9 @@
             <p>Title : <b>{{.doc_title}}</b></p>
             <p>Last Update date: <b>{{.updated}}</b></p>
             <p>Doc Size: <b>{{.doc_size}}</b></p>
+            {{if .editable}}
             <a href="/update_doc/{{.id}}">Update Doc</a>&nbsp;&nbsp;
+            {{end}}
             <a href="/doc/{{.id}}">View Rendered Doc</a>&nbsp;&nbsp;
             <a href="#" class="delete_doc_btn" data-docid="{{.id}}" data-doctitle="{{.doc_title}}">Delete Document</a>
           </div>
@@ -166,6 +168,14 @@
   <dialog id="new_doc_dialog">
     <h3>New Document Dialog</h3>
     <form method="post" action="/new_doc">
+      <div>
+        <label>Select Team (Team Members would be given Edit Access)</label><br>
+        <select name="teamid" required>
+          {{range $.YourTeams}}
+            <option value="{{.teamid}}">{{.team_name}}</option>
+          {{end}}
+      </select>
+      </div>
       <div>
         <label>Enter Folder Name</label><br>
         <input type="text" name="folder" required />

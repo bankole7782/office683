@@ -82,6 +82,12 @@ func allTeams(w http.ResponseWriter, r *http.Request) {
 
 
 func newTeam(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   if r.Method == http.MethodPost {
     status, _ := office683_shared.IsLoggedInUser(r)
     if status == false {
@@ -107,6 +113,12 @@ func newTeam(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTeamMembers(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
   if r.Method == http.MethodPost {
     flaarumClient := office683_shared.GetFlaarumClient()
 

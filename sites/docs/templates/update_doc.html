@@ -47,7 +47,7 @@
     body {
       font-family: Quicksand;
     }
-    input, button {
+    input, button, textarea {
       font-family: Quicksand;
     }
     input[type=text] {
@@ -78,8 +78,9 @@
       margin: 5px 0px;
     }
     #raw_doc {
-      width: 100%;
+      width: calc(100% - 20px);
       height: 600px;
+      margin-left: 20px;
     }
     #md_help pre {
       margin-left: 15px;
@@ -98,7 +99,8 @@
 <body>
   <div id="header">
     <span>Docs</span>
-    <a href="/">All Docs</a>
+    <a href="/docs/">All Docs</a>
+    <a href="/programs">Programs</a>
     <span>Doc Title: <b>{{.DocDetails.doc_title}}</b> </span>
     <a href="/doc/{{.DocId}}">View Rendered Document</a>
     <span>Rendered Document Link: <b>/doc/{{.DocId}}</b></span>

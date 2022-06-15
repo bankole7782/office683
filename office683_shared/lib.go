@@ -132,6 +132,7 @@ func IsLoggedInUser(r *http.Request) (bool, map[string]any) {
   }
 
   return true, map[string]any {
+    "id": (*sessionRow)["userid"],
     "firstname": (*sessionRow)["userid.firstname"],
     "surname": (*sessionRow)["userid.surname"],
     "email": (*sessionRow)["userid.email"],

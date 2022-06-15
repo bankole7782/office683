@@ -4,6 +4,10 @@ fields:
   folder string required
   update_dt datetime required
   public bool
+  teamid int required
+::
+foreign_keys:
+  teamid teams on_delete_restrict
 ::
 unique_groups:
   folder doc_title
