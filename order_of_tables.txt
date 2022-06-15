@@ -2,6 +2,7 @@ users
 sessions
 teams
 team_members
+docs_folders
 docs_images
 docs
 events

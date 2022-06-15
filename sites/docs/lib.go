@@ -14,6 +14,7 @@ func AddHandlers(r *mux.Router) {
 
   r.HandleFunc("/docs/", allDocs)
   r.HandleFunc("/new_doc", newDocument)
+  r.HandleFunc("/new_folder", newFolder)
   r.HandleFunc("/update_doc/{id}", updateDoc)
   r.HandleFunc("/save_doc/{id}", saveDoc)
   r.HandleFunc("/doc/{id}", viewRenderedDoc)

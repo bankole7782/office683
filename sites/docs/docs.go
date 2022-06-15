@@ -7,11 +7,12 @@ import (
   "strconv"
   "fmt"
   "os"
+  "strings"
   "path/filepath"
   "github.com/pkg/errors"
   "github.com/gorilla/mux"
   "github.com/russross/blackfriday/v2"
-  "github.com/dustin/go-humanize"
+  // "github.com/dustin/go-humanize"
   "github.com/bankole7782/office683/office683_shared"
 )
 
@@ -25,17 +26,13 @@ func newDocument(w http.ResponseWriter, r *http.Request) {
 
   if r.Method == http.MethodPost {
     flaarumClient := office683_shared.GetFlaarumClient()
-    if r.FormValue("teamid") == "" {
-      office683_shared.ErrorPage(w, errors.New("The team must be selected."))
-      return
-    }
-    teamIdInt, _ := strconv.ParseInt(r.FormValue("teamid"), 10, 64)
+    parts := strings.Split(r.FormValue("team_folder"), "-")
+    folderIdInt, _ := strconv.ParseInt(parts[1], 10, 64)
     retId, err := flaarumClient.InsertRowAny("docs", map[string]interface{} {
       "doc_title": r.FormValue("doc_title"),
-      "folder": r.FormValue("folder"),
+      "folderid": folderIdInt,
       "update_dt": time.Now(),
       "public": false,
-      "teamid": teamIdInt,
     })
 
     if err != nil {
@@ -49,6 +46,37 @@ func newDocument(w http.ResponseWriter, r *http.Request) {
 
 
 
+func newFolder(w http.ResponseWriter, r *http.Request) {
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
+  if r.Method == http.MethodPost {
+    flaarumClient := office683_shared.GetFlaarumClient()
+    if r.FormValue("teamid") == "" {
+      office683_shared.ErrorPage(w, errors.New("The team must be selected."))
+      return
+    }
+    teamIdInt, _ := strconv.ParseInt(r.FormValue("teamid"), 10, 64)
+    _, err := flaarumClient.InsertRowAny("docs_folders", map[string]interface{} {
+      "folder_name": r.FormValue("folder_name"),
+      "teamid": teamIdInt,
+      "desc": r.FormValue("desc"),
+    })
+
+    if err != nil {
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum insert error"))
+      return
+    }
+
+    r.Method = http.MethodGet
+    http.Redirect(w, r, "/docs/", 307)
+  }
+}
+
+
 func allDocs(w http.ResponseWriter, r *http.Request) {
   status, userDetails := office683_shared.IsLoggedInUser(r)
   if status == false {
@@ -56,12 +84,13 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
-
+  // rootPath, err := office683_shared.GetRootPath()
+  // if err != nil {
+  //   panic(err)
+  // }
+  //
   flaarumClient := office683_shared.GetFlaarumClient()
+  //
 
   teamMembersRows, err := flaarumClient.Search(fmt.Sprintf(`
     table: team_members expand
@@ -75,8 +104,11 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+
   yourTeams := make([]map[string]any, 0)
   yourTeamIds := make([]int64, 0)
+  teamsToFolders := make(map[string][]map[string]any)
+  teamsFolders := make([]map[string]any, 0)
   for _, row := range *teamMembersRows {
     elem := map[string]any {
       "teamid": row["teamid"],
@@ -84,86 +116,37 @@ func allDocs(w http.ResponseWriter, r *http.Request) {
     }
     yourTeams = append(yourTeams, elem)
     yourTeamIds = append(yourTeamIds, row["teamid"].(int64))
-  }
 
-
-
-
-  folderRows, err := flaarumClient.Search(`
-    table: docs distinct
-    fields: folder
-    order_by: folder asc
-    `)
-  if err != nil {
-    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
-    return
-  }
-  folders := make([]string, 0)
-  folderToDocsMap := make(map[string][]map[string]interface{})
-  for _, row := range *folderRows {
-    folderName := row["folder"].(string)
-    folders = append(folders, row["folder"].(string))
-
-    docRows, err := flaarumClient.Search(fmt.Sprintf(`
-      table: docs
+    folderRows, err := flaarumClient.Search(fmt.Sprintf(`
+      table: docs_folders expand
+      order_by: folder asc
       where:
-        folder = '%s'
-      `, folderName))
-
+        teamid = %d
+      `, row["teamid"].(int64)))
     if err != nil {
-      fmt.Println(err)
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+      return
     }
 
-    elems := make([]map[string]interface{}, 0)
-    for _, docRow := range *docRows {
-      docPath := filepath.Join(rootPath, "docs", strconv.FormatInt(docRow["id"].(int64), 10) + ".md")
-      docSize := "0B"
-      if office683_shared.DoesPathExists(docPath) {
-
-        file, err := os.Open(docPath)
-        if err != nil {
-          office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-          return
-        }
-        defer file.Close()
-
-        stat, err := file.Stat()
-        if err != nil {
-          office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-          return
-        }
-        docSize = humanize.Bytes(uint64(stat.Size()))
-      }
-
-      found := false
-      for _, yourTeamId := range yourTeamIds {
-        if yourTeamId == docRow["teamid"].(int64) {
-          found = true
-          break
-        }
-      }
-
-      elems = append(elems, map[string]interface{} {
-        "doc_title": docRow["doc_title"],
-        "updated": docRow["update_dt"],
-        "id": docRow["id"],
-        "doc_size": docSize,
-        "editable": found == true,
+    teamName := row["teamid.team_name"].(string)
+    teamsToFolders[teamName] = *folderRows
+    for _, frow := range *folderRows {
+      teamsFolders = append(teamsFolders, map[string]any {
+        "folder_name": frow["folder_name"], "team_name": frow["teamid.team_name"],
+        "folderid": frow["id"], "teamid": frow["teamid"],
       })
-
     }
-
-    folderToDocsMap[folderName] = elems
   }
 
   type Context struct {
-    Folders []string
-    FoldersToDocsMap map[string][]map[string]any
     YourTeams []map[string]any
+    HaveTeams bool
+    TeamsToFolders map[string][]map[string]any
+    Folders []map[string]any
   }
 
   tmpl := template.Must(template.ParseFS(content, "templates/all_docs.html"))
-  tmpl.Execute(w, Context{folders, folderToDocsMap, yourTeams})
+  tmpl.Execute(w, Context{yourTeams, len(yourTeams) > 0, teamsToFolders, teamsFolders})
 }
 
 
@@ -190,7 +173,6 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
 
   docDetails := map[string]string {
     "doc_title": (*docRow)["doc_title"].(string),
-    "folder": (*docRow)["folder"].(string),
     "updated": (*docRow)["update_dt"].(time.Time).String(),
   }
 
@@ -283,7 +265,6 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
   docDetails := map[string]string {
     "doc_title": (*docRow)["doc_title"].(string),
-    "folder": (*docRow)["folder"].(string),
     "updated": (*docRow)["update_dt"].(time.Time).String(),
   }
 
