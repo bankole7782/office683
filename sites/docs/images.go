@@ -23,7 +23,7 @@ func gallery(w http.ResponseWriter, r *http.Request) {
     limit: 100
     `)
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 

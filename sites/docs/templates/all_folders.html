@@ -22,13 +22,50 @@
         nfDialog.showModal();
       })
 
-      $(document).ready(function(e) {
-        $(".a_doc *").click(function(e) {
-          var aDocDiv = $(e.target).parents(".a_doc")
-          location.href = $(aDocDiv).data("href")
-        })
-      })
+      $(".folder_href").click(function(e) {
+        e.preventDefault();
+        var folderName = $(e.target).data("folder")
 
+        $(".a_doc").each(function(i, el) {
+          var docFolderName = $(el).data("folder")
+          if (docFolderName == folderName) {
+            $(el).show();
+          } else {
+            $(el).hide();
+          }
+        });
+
+        $(".folder_href").removeClass("active")
+        $(e.target).addClass("active");
+      });
+
+      $(".delete_doc_btn").click(function(e) {
+        e.preventDefault();
+
+        var docId = $(e.target).data("docid")
+        var docTitle = $(e.target).data("doctitle")
+
+        msg = "Confirm delete of Document: " + docTitle
+        $("#delete_msg").text(msg);
+        $("#docid_span").text(docId);
+
+        deleteDocDialog.showModal();
+      });
+
+      $("#cancel_doc_dialog").click(function(e) {
+        deleteDocDialog.close();
+      });
+
+      $("#true_delete_btn").click(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+          type: "POST",
+          url: "/delete_doc_u89xe/" + $("#docid_span").text(),
+        }).done(function(o) {
+          location.reload()
+        });
+      })
     })
   </script>
   <style>
@@ -77,7 +114,13 @@
       background-color: #679567;
       color: #fff;
     }
-
+    .a_doc {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .a_doc.active {
+      display:block;
+    }
     #header {
       margin: 0 auto;
     }
@@ -90,17 +133,10 @@
     #all_docs {
       margin-top: 20px;
     }
-    .a_doc {
-      min-width: 200px;
+    .a_folder {
+      width: 200px;
       float: left;
       margin-right: 20px;
-      border: 1px solid gray;
-      cursor: pointer;
-      padding: 20px;
-      max-width: 300px;
-    }
-    .a_doc:hover {
-      border: 1px solid blue;
     }
   </style>
 
@@ -116,14 +152,14 @@
 
   <div id="all_docs">
     {{if .HaveTeams}}
-      <h2> Team: {{.TeamName}} / Folder: {{.FolderName}}</h2>
-      <br>
-      {{range .Documents}}
-        <div class="a_doc" data-href="/update_doc/{{.id}}">
-          <b>{{.doc_title}}</b><br>
-          <span>{{.doc_size}}</span><br>
-          <span>{{.updated}}</span>
-        </div>
+      {{range $.YourTeams}}
+        <h3>{{.team_name}}'s Folders</h3>
+        {{$folders := index $.TeamsToFolders .team_name}}
+        {{range $folders}}
+          <div class="a_folder">
+            <a href="/docs/{{.id}}">{{.folder_name}}</a>
+          </div>
+        {{end}}
       {{end}}
     {{else}}
       <p>You can't view any folder because you are not included in any team. Please contact the admin</p>
