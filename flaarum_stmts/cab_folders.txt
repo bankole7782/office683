@@ -1,0 +1,12 @@
+table: cab_folders
+fields:
+  folder_name string required
+  teamid int required
+  desc text
+::
+foreign_keys:
+  teamid teams on_delete_restrict
+::
+unique_groups:
+  folder_name teamid
+::

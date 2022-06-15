@@ -1,0 +1,10 @@
+table: cab_files
+fields:
+  folderid int required
+  original_name string required
+  format string required
+  upload_dt datetime required
+::
+foreign_keys:
+  folderid docs_folders on_delete_restrict
+::

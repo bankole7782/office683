@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+  <title>Files | Cabinet | Office683 </title>
+  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script src="/gs/autosize.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      autosize($("textarea"));
+
+      const ufDialog = document.getElementById('upload_file_dialog');
+
+      $("#upload_file_btn").click(function(e) {
+        ufDialog.showModal();
+      });
+
+      $(document).ready(function(e) {
+        $(".a_file *").click(function(e) {
+          var aDocDiv = $(e.target).parents(".a_file")
+          location.href = $(aDocDiv).data("href")
+        })
+      })
+
+    })
+  </script>
+  <style>
+    @font-face {
+      font-family: "Quicksand";
+      src: url("/gs/Quicksand-Regular.ttf");
+    }
+    body {
+      font-family: Quicksand;
+      width: 960px;
+      margin: 0 auto;
+    }
+    input, button {
+      font-family: Quicksand;
+    }
+    input, textarea {
+      width: 300px;
+    }
+    input[type=submit], input[type=checkbox] {
+      width: auto;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+    #folders_pane, #docs_pane {
+      float: left;
+    }
+    #folders_pane {
+      width: 200px;
+    }
+    #docs_pane {
+      width: 400px;
+      margin-left: 20px;
+    }
+    h1, h2, h3, h4, p {
+      margin: 5px 0px;
+    }
+    #folders_pane a, #folders_pane a:visited {
+      display: block;
+      padding-left: 10px;
+      padding-bottom: 10px;
+      text-decoration: none;
+      color: blue;
+    }
+    #folders_pane a.active {
+      background-color: #679567;
+      color: #fff;
+    }
+
+    #header {
+      margin: 0 auto;
+    }
+    #header * {
+      margin-left: 20px;
+    }
+    .loud {
+      font-size: 1.5em;
+    }
+    #all_docs {
+      margin-top: 20px;
+    }
+    .a_file {
+      min-width: 200px;
+      float: left;
+      margin-right: 20px;
+      border: 1px solid gray;
+      cursor: pointer;
+      padding: 20px;
+      max-width: 300px;
+    }
+    .a_file:hover {
+      border: 1px solid blue;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="header">
+    <span class="loud">Files</span>
+    <a href="/programs">Programs</a>
+    <a href="/cab/">All Folders</a>
+    <button id="upload_file_btn">Upload File</button>
+  </div>
+
+  <div id="all_docs">
+    <h2> Team: {{.TeamName}} / Folder: {{.FolderName}}</h2>
+    <br>
+    {{range .Files}}
+      <div class="a_file" data-href="/gcf/{{.id}}.{{.format}}">
+        <b>{{.original_name}}.{{.format}}</b><br>
+        <span>{{.upload_dt}}</span>
+      </div>
+    {{end}}
+
+  </div>
+
+
+  <dialog id="upload_file_dialog">
+    <h3>Upload File Dialog</h3>
+    <form method="post" action="/cab_upload_file" enctype="multipart/form-data">
+      <div>
+        <label>Select Team/ Folder (Team Members would be given Edit Access)</label><br>
+        <select name="team_folder" required>
+          {{range $.Folders}}
+            <option value="{{.teamid}}-{{.folderid}}">{{.team_name}}/{{.folder_name}}</option>
+          {{end}}
+      </select>
+      </div>
+      <div>
+        <label>Select File</label><br>
+        <input type="file" name="file" required />
+      </div>
+      <div>
+        <input type="submit" value="Upload" />
+      </div>
+      <p class="help">Press <b>ESC</b> to dismiss</p>
+    </form>
+  </dialog>
+
+</body>
+</html>

@@ -11,6 +11,7 @@ import (
   "github.com/bankole7782/office683/sites/auths"
   "github.com/bankole7782/office683/sites/docs"
   "github.com/bankole7782/office683/sites/events"
+  "github.com/bankole7782/office683/sites/cab"
 )
 
 
@@ -20,6 +21,7 @@ func main() {
     panic(err)
   }
 
+  os.MkdirAll(filepath.Join(rootPath, "cab"), 0777)
   os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
   os.MkdirAll(filepath.Join(rootPath, "docs_images"), 0777)
 
@@ -81,6 +83,7 @@ func main() {
   docs.AddHandlers(r)
   events.AddHandlers(r)
   auths.AddHandlers(r)
+  cab.AddHandlers(r)
 
   fmt.Println("Running office683 @ http://127.0.0.1:8080")
 

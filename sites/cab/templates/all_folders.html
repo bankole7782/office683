@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <title>All Documents</title>
-  <link rel="shorcut icon" type="image/png" href="/gs/office683_logo.png" />
+  <title>Cabinet | Office683</title>
+  <link rel="shortcut icon" type="image/png" href="/gs/office683_logo.png" />
   <script src="/gs/jquery-3.6.0.min.js"></script>
   <script src="/gs/autosize.min.js"></script>
 
@@ -10,12 +10,7 @@
     $(document).ready(function() {
       autosize($("textarea"));
 
-      const ndDialog = document.getElementById('new_doc_dialog');
       const nfDialog = document.getElementById('new_folder_dialog');
-
-      $("#new_doc_btn").click(function(e) {
-        ndDialog.showModal();
-      });
 
       $("#new_folder_btn").click(function(e) {
         nfDialog.showModal();
@@ -98,11 +93,9 @@
 </head>
 <body>
   <div id="header">
-    <span class="loud">All Documents</span>
+    <span class="loud">Cabinets</span>
     <a href="/programs">Programs</a>
     <button id="new_folder_btn">New Folder</button>
-    <button id="new_doc_btn">New Document</button>
-    <a href="/docs_images/">Images for Documents</a>
   </div>
 
   <div id="all_docs">
@@ -112,7 +105,7 @@
         {{$folders := index $.TeamsToFolders .team_name}}
         {{range $folders}}
           <div class="a_folder">
-            <a href="/docs/{{.id}}">{{.folder_name}}</a>
+            <a href="/cab/{{.id}}">{{.folder_name}}</a>
           </div>
         {{end}}
       {{end}}
@@ -121,31 +114,9 @@
     {{end}}
   </div>
 
-  <dialog id="new_doc_dialog">
-    <h3>New Document Dialog</h3>
-    <form method="post" action="/new_doc">
-      <div>
-        <label>Select Team/ Folder (Team Members would be given Edit Access)</label><br>
-        <select name="team_folder" required>
-          {{range $.Folders}}
-            <option value="{{.teamid}}-{{.folderid}}">{{.team_name}}/{{.folder_name}}</option>
-          {{end}}
-      </select>
-      </div>
-      <div>
-        <label>Enter Document Title</label><br>
-        <input type="text" name="doc_title" required />
-      </div>
-      <div>
-        <input type="submit" value="Create" />
-      </div>
-      <p class="help">Press <b>ESC</b> to dismiss</p>
-    </form>
-  </dialog>
-
   <dialog id="new_folder_dialog">
     <h3>New Folder Dialog</h3>
-    <form method="post" action="/new_folder">
+    <form method="post" action="/cab_new_folder">
       <div>
         <label>Select Team (Team Members would be given Edit Access)</label><br>
         <select name="teamid" required>

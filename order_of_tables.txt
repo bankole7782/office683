@@ -6,3 +6,5 @@ docs_folders
 docs_images
 docs
 events
+cab_folders
+cab_files
