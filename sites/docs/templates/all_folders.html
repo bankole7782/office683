@@ -21,9 +21,13 @@
         nfDialog.showModal();
       })
 
-      $(".a_folder *").click(function(e) {
-        var aDocDiv = $(e.target).parents(".a_folder")
-        location.href = $(aDocDiv).data("href")
+      $(".a_folder").click(function(e) {
+        if ( $(e.target).hasClass("a_folder") ) {
+          location.href = $(e.target).data("href")
+        } else {
+          var aDocDiv = $(e.target).parents(".a_folder")
+          location.href = $(aDocDiv).data("href")
+        }
       })
 
     })

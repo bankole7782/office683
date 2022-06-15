@@ -20,11 +20,13 @@
         nfDialog.showModal();
       })
 
-      $(document).ready(function(e) {
-        $(".a_doc *").click(function(e) {
+      $(".a_doc").click(function(e) {
+        if ( $(e.target).hasClass("a_doc") ) {
+          location.href = $(e.target).data("href")
+        } else {
           var aDocDiv = $(e.target).parents(".a_doc")
           location.href = $(aDocDiv).data("href")
-        })
+        }
       })
 
     })

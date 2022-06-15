@@ -16,9 +16,13 @@
         ufDialog.showModal();
       });
 
-      $(".a_file *").click(function(e) {
-        var aDocDiv = $(e.target).parents(".a_file")
-        location.href = $(aDocDiv).data("href")
+      $(".a_file").click(function(e) {
+        if ( $(e.target).hasClass("a_file") ) {
+          location.href = $(e.target).data("href")
+        } else {
+          var aDocDiv = $(e.target).parents(".a_file")
+          location.href = $(aDocDiv).data("href")
+        }
       })
 
     })
