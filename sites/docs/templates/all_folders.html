@@ -21,6 +21,11 @@
         nfDialog.showModal();
       })
 
+      $(".a_folder *").click(function(e) {
+        var aDocDiv = $(e.target).parents(".a_folder")
+        location.href = $(aDocDiv).data("href")
+      })
+
     })
   </script>
   <style>
@@ -30,7 +35,6 @@
     }
     body {
       font-family: Quicksand;
-      width: 960px;
       margin: 0 auto;
     }
     input, button {
@@ -78,6 +82,7 @@
     }
     #header {
       margin: 0 auto;
+      width: 960px;
     }
     #header * {
       margin-left: 20px;
@@ -86,12 +91,20 @@
       font-size: 1.5em;
     }
     #all_docs {
-      margin-top: 20px;
+      margin: 20px;
     }
     .a_folder {
-      width: 200px;
+      min-width: 200px;
       float: left;
       margin-right: 20px;
+      border: 1px solid gray;
+      cursor: pointer;
+      padding: 20px;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+    .a_folder:hover {
+      border: 1px solid blue;
     }
   </style>
 
@@ -101,7 +114,6 @@
     <span class="loud">All Documents</span>
     <a href="/programs">Programs</a>
     <button id="new_folder_btn">New Folder</button>
-    <button id="new_doc_btn">New Document</button>
     <a href="/docs_images/">Images for Documents</a>
   </div>
 
@@ -111,8 +123,9 @@
         <h3>{{.team_name}}'s Folders</h3>
         {{$folders := index $.TeamsToFolders .team_name}}
         {{range $folders}}
-          <div class="a_folder">
-            <a href="/docs/{{.id}}">{{.folder_name}}</a>
+          <div class="a_folder" data-href="/docs/{{.id}}">
+            <b>{{.folder_name}}</b><br>
+            <span>{{.children_count}} Files</span></br>
           </div>
         {{end}}
       {{end}}
@@ -120,28 +133,6 @@
       <p>You can't view any folder because you are not included in any team. Please contact the admin</p>
     {{end}}
   </div>
-
-  <dialog id="new_doc_dialog">
-    <h3>New Document Dialog</h3>
-    <form method="post" action="/new_doc">
-      <div>
-        <label>Select Team/ Folder (Team Members would be given Edit Access)</label><br>
-        <select name="team_folder" required>
-          {{range $.Folders}}
-            <option value="{{.teamid}}-{{.folderid}}">{{.team_name}}/{{.folder_name}}</option>
-          {{end}}
-      </select>
-      </div>
-      <div>
-        <label>Enter Document Title</label><br>
-        <input type="text" name="doc_title" required />
-      </div>
-      <div>
-        <input type="submit" value="Create" />
-      </div>
-      <p class="help">Press <b>ESC</b> to dismiss</p>
-    </form>
-  </dialog>
 
   <dialog id="new_folder_dialog">
     <h3>New Folder Dialog</h3>

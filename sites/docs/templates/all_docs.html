@@ -11,8 +11,6 @@
       autosize($("textarea"));
 
       const ndDialog = document.getElementById('new_doc_dialog');
-      const nfDialog = document.getElementById('new_folder_dialog');
-      const deleteDocDialog = document.getElementById("delete_doc_dialog");
 
       $("#new_doc_btn").click(function(e) {
         ndDialog.showModal();
@@ -38,7 +36,6 @@
     }
     body {
       font-family: Quicksand;
-      width: 960px;
       margin: 0 auto;
     }
     input, button {
@@ -80,6 +77,7 @@
 
     #header {
       margin: 0 auto;
+      width: 960px;
     }
     #header * {
       margin-left: 20px;
@@ -88,7 +86,7 @@
       font-size: 1.5em;
     }
     #all_docs {
-      margin-top: 20px;
+      margin: 20px;
     }
     .a_doc {
       min-width: 200px;
@@ -109,7 +107,7 @@
   <div id="header">
     <span class="loud">All Documents</span>
     <a href="/programs">Programs</a>
-    <button id="new_folder_btn">New Folder</button>
+    <a href="/docs/">All Folders</a>
     <button id="new_doc_btn">New Document</button>
     <a href="/docs_images/">Images for Documents</a>
   </div>
@@ -144,32 +142,6 @@
       <div>
         <label>Enter Document Title</label><br>
         <input type="text" name="doc_title" required />
-      </div>
-      <div>
-        <input type="submit" value="Create" />
-      </div>
-      <p class="help">Press <b>ESC</b> to dismiss</p>
-    </form>
-  </dialog>
-
-  <dialog id="new_folder_dialog">
-    <h3>New Folder Dialog</h3>
-    <form method="post" action="/new_folder">
-      <div>
-        <label>Select Team (Team Members would be given Edit Access)</label><br>
-        <select name="teamid" required>
-          {{range $.YourTeams}}
-            <option value="{{.teamid}}">{{.team_name}}</option>
-          {{end}}
-      </select>
-      </div>
-      <div>
-        <label>Enter Folder Name</label><br>
-        <input type="text" name="folder_name" required />
-      </div>
-      <div>
-        <label>Optional Description</label><br>
-        <textarea name="desc"></textarea>
       </div>
       <div>
         <input type="submit" value="Create" />

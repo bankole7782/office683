@@ -121,13 +121,30 @@ func allFolders(w http.ResponseWriter, r *http.Request) {
     }
 
     teamName := row["teamid.team_name"].(string)
-    teamsToFolders[teamName] = *folderRows
+    tmpFoldersStuff := make([]map[string]any, 0)
     for _, frow := range *folderRows {
       teamsFolders = append(teamsFolders, map[string]any {
         "folder_name": frow["folder_name"], "team_name": frow["teamid.team_name"],
         "folderid": frow["id"], "teamid": frow["teamid"],
       })
+
+      countOfDocs, err := flaarumClient.CountRows(fmt.Sprintf(`
+        table: docs
+        where:
+          folderid = %d
+        `, frow["id"].(int64)))
+      if err != nil {
+        office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+        return
+      }
+
+      tmpFoldersStuff = append(tmpFoldersStuff, map[string]any{
+        "folder_name": frow["folder_name"], "id": frow["id"],
+        "children_count": countOfDocs,
+      })
     }
+
+    teamsToFolders[teamName] = tmpFoldersStuff
   }
 
   type Context struct {
