@@ -10,6 +10,10 @@
         font-family: "Quicksand";
         src: url("/gs/Quicksand-Regular.ttf");
       }
+      @font-face {
+        font-family: "GrandHotel";
+        src: url("/gs/GrandHotel-Regular.ttf");
+      }
       body {
         font-family: Quicksand;
         width: 960px;
@@ -19,7 +23,7 @@
         font-family: Quicksand;
       }
       #logo {
-        width: 120px;
+        width: 100px;
       }
       #header * {
         float: left;
@@ -34,7 +38,9 @@
       .a_program h3 {
         width: 150px;
         float: left;
-        margin: 20px;
+        margin: 5px 20px 20px 20px;
+        font-family: "GrandHotel";
+        font-size: 2em;
       }
       .a_program p {
         margin-left: 20px;
@@ -66,6 +72,12 @@
     <div style="clear: both"></div>
     <h2>All Programs</h2>
 
+    <div class="a_program" data-href="/cab/">
+      <h3>Cabinet</h3>
+      <p>A store of files. You can upload files created from your local programs here.</p>
+    </div>
+    <div style="clear: both"></div>
+
     <div class="a_program" data-href="/docs/">
       <h3>Documents</h3>
       <p>A documents editor. It uses markdown. Its not like Microsoft Word.</p>
@@ -78,13 +90,8 @@
     </div>
     <div style="clear: both"></div>
 
-    <!-- <div class="a_program" data-href="/sheets/">
-      <h3>Spreadsheets</h3>
-      <p>A spreadsheet. Prepare your cost estimates etc in this program.</p>
-    </div> -->
-    <div style="clear: both"></div>
-
     <hr>
+
     <p>
       Hello <b>{{.Fullname}}</b>
       &nbsp;&nbsp;
