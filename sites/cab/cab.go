@@ -196,6 +196,28 @@ func filesOfFolder(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func createWrittenName() string {
+  flaarumClient := office683_shared.GetFlaarumClient()
+
+  for {
+    rs := office683_shared.UntestedRandomString(100)
+    count, err := flaarumClient.CountRows(fmt.Sprintf(`
+      table: cab_files
+      where:
+        written_filename = '%s'
+      `, rs))
+    if err != nil {
+      fmt.Println(err.Error())
+      return ""
+    }
+
+    if count == 0 {
+      return rs
+    }
+  }
+}
+
+
 func uploadFile(w http.ResponseWriter, r *http.Request) {
   rootPath, err := office683_shared.GetRootPath()
   if err != nil {
@@ -225,12 +247,14 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
   ext := filepath.Ext(handler.Filename)
   parts := strings.Split(r.FormValue("team_folder"), "-")
   folderIdInt, _ := strconv.ParseInt(parts[1], 10, 64)
+  writtenFileName := createWrittenName()
 
-  retId, err := flaarumClient.InsertRowAny("cab_files", map[string]any {
-    "original_name": handler.Filename[:len(handler.Filename)-4],
+  _, err = flaarumClient.InsertRowAny("cab_files", map[string]any {
+    "original_name": handler.Filename[:len(handler.Filename)-len(ext)],
     "upload_dt": time.Now(),
     "format": ext[1:],
     "folderid": folderIdInt,
+    "written_filename": writtenFileName,
   })
 
   if err != nil {
@@ -239,7 +263,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-	err = os.WriteFile(filepath.Join(rootPath, "cab", strconv.FormatInt(retId, 10) + ext), rawFile, 0777)
+	err = os.WriteFile(filepath.Join(rootPath, "cab", writtenFileName + ext), rawFile, 0777)
 	if err != nil {
 		fmt.Fprintf(w, "not_ok")
 		fmt.Println(err)
@@ -259,11 +283,39 @@ func getFile(w http.ResponseWriter, r *http.Request) {
 
   vars := mux.Vars(r)
   fileName := vars["name"]
+  flaarumClient := office683_shared.GetFlaarumClient()
+  ext := filepath.Ext(fileName)
+  fileNameNoExt := fileName[:len(fileName)-len(ext)]
+
+  fileRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+    table: cab_files
+    where:
+      written_filename = '%s'
+    `, fileNameNoExt))
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+
+  originalFileName := (*fileRow)["original_name"].(string)
 
   rootPath, err := office683_shared.GetRootPath()
   if err != nil {
-    panic(err)
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  rawObj, err := os.ReadFile(filepath.Join(rootPath, "cab", fileName))
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
+    return
   }
 
-  http.ServeFile(w, r, filepath.Join(rootPath, "cab", fileName))
+  w.Header().Set("Content-Disposition", "attachment; filename=" + originalFileName + ext)
+  if ext == ".js" {
+    w.Header().Set("Content-Type", "text/javascript")
+  } else {
+    contentType := http.DetectContentType(rawObj)
+    w.Header().Set("Content-Type", contentType)
+  }
+  w.Write(rawObj)
 }

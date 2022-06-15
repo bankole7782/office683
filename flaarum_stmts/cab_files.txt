@@ -2,6 +2,7 @@ table: cab_files
 fields:
   folderid int required
   original_name string required
+  written_filename string required unique
   format string required
   upload_dt datetime required
 ::

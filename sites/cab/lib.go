@@ -11,5 +11,4 @@ func AddHandlers(r *mux.Router) {
   r.HandleFunc("/cab_new_folder", newFolder)
   r.HandleFunc("/cab_upload_file", uploadFile)
   r.HandleFunc("/gcf/{name}", getFile)
-
 }

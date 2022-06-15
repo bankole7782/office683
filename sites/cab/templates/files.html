@@ -111,7 +111,7 @@
     <h2> Team: {{.TeamName}} / Folder: {{.FolderName}}</h2>
     <br>
     {{range .Files}}
-      <div class="a_file" data-href="/gcf/{{.id}}.{{.format}}">
+      <div class="a_file" data-href="/gcf/{{.written_filename}}.{{.format}}">
         <b>{{.original_name}}.{{.format}}</b><br>
         <span>{{.upload_dt}}</span>
       </div>
