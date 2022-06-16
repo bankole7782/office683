@@ -22,3 +22,8 @@ admin_email: admin@admin.com
 ```
 
 Save this to `$HOME/office683_data/install.zconf`
+
+
+### Database Tables
+
+The project uses [flaarum](github.com/saenuma/flaarum)

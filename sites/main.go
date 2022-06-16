@@ -25,6 +25,11 @@ func main() {
   os.MkdirAll(filepath.Join(rootPath, "docs"), 0777)
   os.MkdirAll(filepath.Join(rootPath, "docs_images"), 0777)
 
+  err = CreateOrUpdateAllTables()
+  if err != nil {
+    panic(err)
+  }
+  
   conf, err := office683_shared.GetInstallationConfig()
   if err != nil {
     panic(err)

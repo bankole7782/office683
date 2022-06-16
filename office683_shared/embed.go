@@ -9,3 +9,6 @@ var ContentStatics embed.FS
 
 //go:embed templates/*
 var Content embed.FS
+
+//go:embed flaarum_stmts/*
+var FlaarumStmts embed.FS
