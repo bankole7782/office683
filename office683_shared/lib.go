@@ -10,7 +10,6 @@ import (
   "strings"
   "html/template"
   "net/http"
-  "os/exec"
   "github.com/saenuma/flaarum"
   "github.com/saenuma/zazabul"
 )
@@ -52,7 +51,10 @@ func DoesPathExists(p string) bool {
 
 
 func GetFlaarumClient() flaarum.Client {
-  conf, _ := GetInstallationConfig()
+  conf, err := GetInstallationConfig()
+  if err != nil {
+    panic(err)
+  }
   keyStr := conf.Get("flaarum_keystr")
   flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 

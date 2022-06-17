@@ -214,15 +214,14 @@ sudo chmod a+w $DATA_BTRFS
 
 sudo snap restart flaarum.store
 sudo snap start flaarum.tindexer
-sudo snap start flaarum.gcprb
 sudo snap stop --disable flaarum.statsr
 
 sudo snap install office683 --edge
 
 `
-startupScript += "cat <<EOT >" + filepath.Join(rootPath, "install.zconf")
-startupScript += string(rawInstallZconf)
-startupScript += "EOT"
+		startupScript += "cat <<EOT > /var/snap/office683/common/install.zconf"
+		startupScript += string(rawInstallZconf)
+		startupScript += "EOT"
 
   	ctx := context.Background()
 
