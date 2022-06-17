@@ -21,7 +21,9 @@ admin_pass: MClhRqmAUYMJndr0m3R3sAslKHrNimFIRkuTaicx02lh00Js1Z
 admin_email: admin@admin.com
 ```
 
-Save this to `$HOME/office683_data/install.zconf`
+Save this to `$HOME/office683_data/install.zconf` if you are running office683 outside snapcraft
+
+Save this to `$HOME/snap/office683/common/install.zconf` if you are running office683 inside snapcraft
 
 
 ### Database Tables
