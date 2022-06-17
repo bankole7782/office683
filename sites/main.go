@@ -29,7 +29,7 @@ func main() {
   if err != nil {
     panic(err)
   }
-  
+
   conf, err := office683_shared.GetInstallationConfig()
   if err != nil {
     panic(err)
@@ -90,9 +90,9 @@ func main() {
   auths.AddHandlers(r)
   cab.AddHandlers(r)
 
-  fmt.Println("Running office683 @ http://127.0.0.1:8080")
+  fmt.Println("Running office683 @ http://127.0.0.1:8387")
 
-  err = http.ListenAndServe(":8080", r)
+  err = http.ListenAndServe(":8387", r)
   if err != nil {
     fmt.Println(err)
     panic(err)
