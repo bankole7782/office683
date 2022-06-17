@@ -10,6 +10,7 @@ import (
   "strings"
   "html/template"
   "net/http"
+  "os/exec"
   "github.com/saenuma/flaarum"
   "github.com/saenuma/zazabul"
 )
@@ -20,8 +21,8 @@ func GetRootPath() (string, error) {
   if err != nil {
     return "", errors.Wrap(err, "os error")
   }
-  dd := os.Getenv("SNAP_USER_COMMON")
-  if strings.HasPrefix(dd, filepath.Join(hd, "snap", "go")) || dd == "" {
+  dd := os.Getenv("SNAP_COMMON")
+  if dd == "/var/snap/go/common" || dd == "" {
     dd = filepath.Join(hd, "office683_data")
     os.MkdirAll(dd, 0777)
   }
@@ -51,12 +52,11 @@ func DoesPathExists(p string) bool {
 
 
 func GetFlaarumClient() flaarum.Client {
-  keyStrPath := filepath.Join("/var/snap/flaarum/common", "flaarum.keyfile")
-  keyStr := "not-yet-set"
-  raw, err := os.ReadFile(keyStrPath)
-  if err == nil {
-    keyStr = string(raw)
+  out, err := exec.Command("sudo", "flaarum.prod", "r").Output()
+  if err != nil {
+    panic(err)
   }
+  keyStr := string(out)
   flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 
   err = flaarumClient.Ping()

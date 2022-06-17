@@ -74,7 +74,7 @@ func main() {
 
 	switch os.Args[1] {
   case "--help", "help", "h":
-    fmt.Println(`lgcp creates and configures a flaarum server on Google Cloud.
+    fmt.Println(`lgcp creates and configures a office683 server on Google Cloud.
 
 Supported Commands:
 
@@ -101,7 +101,7 @@ Supported Commands:
 project:
 
 // region is the Google Cloud Region name
-// Specify the region you want to launch your flaarum server in.
+// Specify the region you want to launch your office683 server in.
 region:
 
 
@@ -114,7 +114,7 @@ zone:
 // 10 is the minimum.
 disk_size: 20
 
-// machine_type is the type of machine configuration to use to launch your flaarum server.
+// machine_type is the type of machine configuration to use to launch your office683 server.
 // You must get this value from the Google Cloud Compute documentation if not it would fail.
 // It is not necessary it must be an e2 instance.
 machine_type: e2-highcpu-2
@@ -207,7 +207,7 @@ sudo snap start flaarum.tindexer
 sudo snap start flaarum.gcprb
 sudo snap stop --disable flaarum.statsr
 
-sudo snap install office683
+sudo snap install office683 --edge
 
 `
 startupScript += "cat <<EOT >" + filepath.Join(rootPath, "install.zconf")
@@ -224,8 +224,7 @@ startupScript += "EOT"
 
 		op, err := computeService.Addresses.Insert(conf.Get("project"), conf.Get("region"), &compute.Address{
 			AddressType: "EXTERNAL",
-			Description: "IP address for a flaarum server (" + instanceName + ").",
-			Subnetwork: "regions/" + conf.Get("region") + "/subnetworks/default",
+			Description: "IP address for a office683 server (" + instanceName + ").",
 			Name: instanceName + "-ip",
 		}).Context(ctx).Do()
 
@@ -250,7 +249,7 @@ startupScript += "EOT"
 		imageURL := image.SelfLink
 
 		op, err = computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
-			Description: "Data disk for a flaarum server (" + instanceName + ").",
+			Description: "Data disk for a office683 server (" + instanceName + ").",
 			SizeGb: diskSizeInt,
 			Type: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
 			Name: dataDiskName,
@@ -295,10 +294,9 @@ startupScript += "EOT"
 						{
 							Type: "ONE_TO_ONE_NAT",
 							Name: "External NAT",
+							NatIP: computeAddr.Address,
 						},
 					},
-					Network: prefix + "/global/networks/default",
-					NetworkIP: computeAddr.Address,
 				},
 			},
 			ServiceAccounts: []*compute.ServiceAccount{
