@@ -16,25 +16,17 @@ import (
 
 
 func GetRootPath() (string, error) {
-  var rootPath string
-
-	devCheckStr := os.Getenv("OFFICE683_DEV")
-  if devCheckStr == "true" {
-    hd, err := os.UserHomeDir()
-  	if err != nil {
-  		return "", errors.Wrap(err, "os error")
-  	}
-    rootPath = filepath.Join(hd, "office683_data")
-  } else {
-    rootPath = "/office683"
-  }
-
-  err := os.MkdirAll(rootPath, 0777)
+  hd, err := os.UserHomeDir()
   if err != nil {
-    panic(err)
+    return "", errors.Wrap(err, "os error")
+  }
+  dd := os.Getenv("SNAP_USER_COMMON")
+  if strings.HasPrefix(dd, filepath.Join(hd, "snap", "go")) || dd == "" {
+    dd = filepath.Join(hd, "office683_data")
+    os.MkdirAll(dd, 0777)
   }
 
-	return rootPath, nil
+  return dd, nil
 }
 
 
