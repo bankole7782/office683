@@ -26,8 +26,12 @@ Save this to `$HOME/office683_data/install.zconf` if you are running office683 o
 
 Save this to `$HOME/snap/office683/common/install.zconf` if you are running office683 inside snapcraft
 
-
+The server is bound to `http://127.0.0.1:8387`
 
 ## User Registration
 
 Go to `/register`. You would need the admin_pass.
+
+## Production Config
+
+Setup a HTTPS proxy to `http://127.0.0.1:8387` and disable external access to port '8387'
