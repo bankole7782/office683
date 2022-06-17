@@ -54,11 +54,9 @@ func GetFlaarumClient() flaarum.Client {
   keyStrPath := filepath.Join("/var/snap/flaarum/common", "flaarum.keyfile")
   keyStr := "not-yet-set"
   raw, err := os.ReadFile(keyStrPath)
-  if err != nil {
-    fmt.Println(err)
-    panic(err)
+  if err == nil {
+    keyStr = string(raw)
   }
-  keyStr = string(raw)
   flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 
   err = flaarumClient.Ping()
