@@ -56,7 +56,14 @@ func GetFlaarumClient() flaarum.Client {
   if devCheckStr == "true" {
     flaarumClient = flaarum.NewClient("127.0.0.1", "not-set", "first_proj")
   } else {
-    flaarumClient = flaarum.NewClient("127.0.0.1", "not-set", "first_proj")
+    keyStrPath := filepath.Join("/var/snap/flaarum/common", "flaarum.keyfile")
+    raw, err := os.ReadFile(keyStrPath)
+    if err != nil {
+      fmt.Println(err)
+      panic(err)
+    }
+    keyStr := string(raw)
+    flaarumClient = flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
   }
 
   err := flaarumClient.Ping()
