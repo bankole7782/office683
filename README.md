@@ -4,7 +4,7 @@ a group of tools for any office
 
 ## Database
 
-The project uses [flaarum](github.com/saenuma/flaarum)
+The project uses [flaarum](https://github.com/saenuma/flaarum)
 
 ## Development Environment Config
 
