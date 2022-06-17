@@ -25,3 +25,9 @@ admin_email: admin@admin.com
 Save this to `$HOME/office683_data/install.zconf` if you are running office683 outside snapcraft
 
 Save this to `$HOME/snap/office683/common/install.zconf` if you are running office683 inside snapcraft
+
+
+
+## User Registration
+
+Go to `/register`. You would need the admin_pass.
