@@ -1,0 +1,35 @@
+name: office683 # you probably want to 'snapcraft register <name>'
+base: core20 # the base snap is the execution environment for this snap
+version: '0.1.0' # just for humans, typically '1.2+git' or '1.3.2'
+summary: A group of tools for any office # 79 char long summary
+description: |
+  Office683 is a group of tools for any office.
+  The data made in office683 is stored in Google Cloud in your own account.
+  The developers of this program have no access to your data.
+
+  It currently contains cabinet, docs and events
+  Cabinet is a store of uploaded files.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  my-part:
+    # See 'snapcraft plugins'
+    plugin: go
+    source: .
+
+
+apps:
+  lgcp:
+    command: bin/lgcp
+    plugs:
+      - network
+
+  sites:
+    command: bin/sites
+    daemon: simple
+    restart-condition: on-abnormal
+    plugs:
+      - network
+      - network-bind
