@@ -20,7 +20,7 @@ func allEvents(w http.ResponseWriter, r *http.Request) {
     order_by: begin_date asc
     `)
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 
@@ -69,7 +69,7 @@ func newEvent(w http.ResponseWriter, r *http.Request) {
     })
 
     if err != nil {
-      ErrorPage(w, errors.Wrap(err, "flaarum insert error"))
+      office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum insert error"))
       return
     }
 
@@ -95,7 +95,7 @@ func aEvent(w http.ResponseWriter, r *http.Request) {
       id = %s
     `, docId))
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 
@@ -149,7 +149,7 @@ func deleteAEvent(w http.ResponseWriter, r *http.Request) {
       id = %s
     `, docId))
   if err != nil {
-    ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
     return
   }
 
