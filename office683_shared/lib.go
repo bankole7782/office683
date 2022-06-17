@@ -51,22 +51,17 @@ func DoesPathExists(p string) bool {
 
 
 func GetFlaarumClient() flaarum.Client {
-  devCheckStr := os.Getenv("OFFICE683_DEV")
-  var flaarumClient flaarum.Client
-  if devCheckStr == "true" {
-    flaarumClient = flaarum.NewClient("127.0.0.1", "not-set", "first_proj")
-  } else {
-    keyStrPath := filepath.Join("/var/snap/flaarum/common", "flaarum.keyfile")
-    raw, err := os.ReadFile(keyStrPath)
-    if err != nil {
-      fmt.Println(err)
-      panic(err)
-    }
-    keyStr := string(raw)
-    flaarumClient = flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
+  keyStrPath := filepath.Join("/var/snap/flaarum/common", "flaarum.keyfile")
+  keyStr := "not-yet-set"
+  raw, err := os.ReadFile(keyStrPath)
+  if err != nil {
+    fmt.Println(err)
+    panic(err)
   }
+  keyStr = string(raw)
+  flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 
-  err := flaarumClient.Ping()
+  err = flaarumClient.Ping()
   if err != nil {
     panic(err)
   }
