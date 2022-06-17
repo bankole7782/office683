@@ -10,8 +10,13 @@ description: |
   It currently contains cabinet, docs and events
   Cabinet is a store of uploaded files.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+  It's a terminal program.
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+
+architectures:
+  - build-on: amd64
 
 parts:
   my-part:
