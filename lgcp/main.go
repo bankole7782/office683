@@ -138,7 +138,7 @@ admin_email: admin@admin.com
     }
 
 		conf.Update(map[string]string {
-			"admin_pass": office683_shared.UntestedRandomString(100),
+			"admin_pass": office683_shared.UntestedRandomString(50),
 		})
     err = conf.Write(writePath)
     if err != nil {
