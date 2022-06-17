@@ -52,11 +52,8 @@ func DoesPathExists(p string) bool {
 
 
 func GetFlaarumClient() flaarum.Client {
-  out, err := exec.Command("sudo", "flaarum.prod", "r").Output()
-  if err != nil {
-    panic(err)
-  }
-  keyStr := string(out)
+  conf, _ := GetInstallationConfig()
+  keyStr := conf.Get("flaarum_keystr")
   flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 
   err = flaarumClient.Ping()

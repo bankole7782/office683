@@ -130,6 +130,16 @@ admin_pass:
 
 // admin_email is for contacting the admin to get access
 admin_email: admin@admin.com
+
+// flaarum_keystr is the key used in connecting to the flaarum server.
+// you must set this after running this program.
+// you can get it by sshing into your server and running 'flaarum.prod r'
+flaarum_keystr:
+
+
+// domain must be set after launching your server
+domain:
+
 `
 
     conf, err := zazabul.ParseConfig(tmpl)
@@ -222,23 +232,23 @@ startupScript += "EOT"
 			panic(err)
 		}
 
-		op, err := computeService.Addresses.Insert(conf.Get("project"), conf.Get("region"), &compute.Address{
-			AddressType: "EXTERNAL",
-			Description: "IP address for a office683 server (" + instanceName + ").",
-			Name: instanceName + "-ip",
-		}).Context(ctx).Do()
-
-		err = waitForOperationRegion(conf.Get("project"), conf.Get("region"), computeService, op)
-		if err != nil {
-			panic(err)
-		}
-
-		computeAddr, err := computeService.Addresses.Get(conf.Get("project"), conf.Get("region"), instanceName + "-ip").Context(ctx).Do()
-		if err != nil {
-			panic(err)
-		}
-
-		fmt.Println("Office683 server address: ", computeAddr.Address)
+		// op, err := computeService.Addresses.Insert(conf.Get("project"), conf.Get("region"), &compute.Address{
+		// 	AddressType: "EXTERNAL",
+		// 	Description: "IP address for a office683 server (" + instanceName + ").",
+		// 	Name: instanceName + "-ip",
+		// }).Context(ctx).Do()
+		//
+		// err = waitForOperationRegion(conf.Get("project"), conf.Get("region"), computeService, op)
+		// if err != nil {
+		// 	panic(err)
+		// }
+		//
+		// computeAddr, err := computeService.Addresses.Get(conf.Get("project"), conf.Get("region"), instanceName + "-ip").Context(ctx).Do()
+		// if err != nil {
+		// 	panic(err)
+		// }
+		//
+		// fmt.Println("Office683 server address: ", computeAddr.Address)
 
 		prefix := "https://www.googleapis.com/compute/v1/projects/" + conf.Get("project")
 
@@ -248,7 +258,7 @@ startupScript += "EOT"
 		}
 		imageURL := image.SelfLink
 
-		op, err = computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
+		op, err := computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
 			Description: "Data disk for a office683 server (" + instanceName + ").",
 			SizeGb: diskSizeInt,
 			Type: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
@@ -294,7 +304,7 @@ startupScript += "EOT"
 						{
 							Type: "ONE_TO_ONE_NAT",
 							Name: "External NAT",
-							NatIP: computeAddr.Address,
+							// NatIP: computeAddr.Address,
 						},
 					},
 				},
