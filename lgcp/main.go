@@ -221,7 +221,7 @@ sudo snap stop --disable flaarum.statsr
 sudo snap install office683 --edge
 
 `
-		startupScript += "cat <<EOT > /var/snap/office683/common/install.zconf"
+		startupScript += "cat <<EOT > /var/snap/office683/common/install.zconf\n\n"
 		startupScript += string(rawInstallZconf)
 		startupScript += "EOT"
 
