@@ -7,5 +7,5 @@ fields:
   upload_dt datetime required
 ::
 foreign_keys:
-  folderid docs_folders on_delete_restrict
+  folderid cab_folders on_delete_restrict
 ::
