@@ -82,7 +82,9 @@ func GetInstallationConfig() (zazabul.Config, error) {
 
   for _, item := range conf.Items {
     if item.Value == "" {
-      return zazabul.Config{}, errors.New("Every field in the launch file is compulsory.")
+      if item.Name != "flaarum_keystr" && item.Name != "domain" {
+        return zazabul.Config{}, errors.New("Every field in the launch file is compulsory.")
+      }
     }
   }
 

@@ -134,7 +134,7 @@ admin_email: admin@admin.com
 // flaarum_keystr is the key used in connecting to the flaarum server.
 // you must set this after running this program.
 // you can get it by sshing into your server and running 'flaarum.prod r'
-flaarum_keystr:
+flaarum_keystr: not-yet-set
 
 
 // domain must be set after launching your server
@@ -176,8 +176,10 @@ domain:
 
   	for _, item := range conf.Items {
   		if item.Value == "" {
-  			color.Red.Println("Every field in the launch file is compulsory.")
-  			os.Exit(1)
+				if item.Name != "flaarum_keystr" && item.Name != "domain" {
+					color.Red.Println("Every field in the launch file is compulsory.")
+					os.Exit(1)
+				}
   		}
   	}
 
