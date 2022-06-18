@@ -223,6 +223,9 @@ sudo snap stop --disable flaarum.statsr
 gcloud compute firewall-rules create o683https --direction ingress \
  --source-ranges 0.0.0.0/0 --rules tcp:443 --action allow
 
+gcloud compute firewall-rules create o683http --direction ingress \
+ --source-ranges 0.0.0.0/0 --rules tcp:80 --action allow
+
 sudo snap install office683 --edge
 
 `
