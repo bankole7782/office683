@@ -30,6 +30,21 @@ func GetRootPath() (string, error) {
 }
 
 
+func GetUserPath() (string, error) {
+  hd, err := os.UserHomeDir()
+  if err != nil {
+    return "", errors.Wrap(err, "os error")
+  }
+  dd := os.Getenv("SNAP_USER_COMMON")
+  if dd == "/var/snap/go/common" || dd == "" {
+    dd = filepath.Join(hd, "office683_data")
+    os.MkdirAll(dd, 0777)
+  }
+
+  return dd, nil
+}
+
+
 func UntestedRandomString(length int) string {
   var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"

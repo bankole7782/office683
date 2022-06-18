@@ -89,12 +89,12 @@ Supported Commands:
   case "init":
     configFileName := "o683_" + time.Now().Format("20060102T150405") + ".zconf"
 
-    rootPath, err := office683_shared.GetRootPath()
+    userPath, err := office683_shared.GetUserPath()
     if err != nil {
     	panic(err)
     }
 
-		writePath := filepath.Join(rootPath, configFileName)
+		writePath := filepath.Join(userPath, configFileName)
 
     var	tmpl = `// project is the Google Cloud Project name
 // It can be created either from the Google Cloud Console or from the gcloud command
@@ -163,12 +163,12 @@ domain:
   		os.Exit(1)
   	}
 
-		rootPath, err := office683_shared.GetRootPath()
+		userPath, err := office683_shared.GetUserPath()
     if err != nil {
     	panic(err)
     }
 
-		inputPath := filepath.Join(rootPath, os.Args[2])
+		inputPath := filepath.Join(userPath, os.Args[2])
   	conf, err := zazabul.LoadConfigFile(inputPath)
   	if err != nil {
   		panic(err)
@@ -183,7 +183,7 @@ domain:
   		}
   	}
 
-		credentialsFilePath := filepath.Join(rootPath, os.Args[3])
+		credentialsFilePath := filepath.Join(userPath, os.Args[3])
 
 		instanceName := fmt.Sprintf("o683-%s", strings.ToLower(office683_shared.UntestedRandomString(4)))
 		diskName := fmt.Sprintf("%s-disk", instanceName)
