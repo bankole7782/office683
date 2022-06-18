@@ -24,7 +24,7 @@ func main() {
   }
 
   var c *exec.Cmd
-  if conf.Get("domain") != "" {
+  if conf.Get("domain") == "" {
     fmt.Println("Domain name not set. Using self-signed certificate")
     c = exec.Command(command, "-from", "0.0.0.0:443", "-to", "127.0.0.1:8387",
       "-domain", conf.Get("domain"))

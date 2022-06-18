@@ -220,6 +220,9 @@ sudo snap restart flaarum.store
 sudo snap start flaarum.tindexer
 sudo snap stop --disable flaarum.statsr
 
+gcloud compute firewall-rules create o683https --direction ingress \
+ --source-ranges 0.0.0.0/0 --rules tcp:443 --action allow
+
 sudo snap install office683 --edge
 
 `
