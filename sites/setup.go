@@ -99,14 +99,9 @@ func createOrUpdateTable(stmt string) error {
 
 
 func CreateOrUpdateAllTables() error {
-  dirFIs, err := office683_shared.FlaarumStmts.ReadDir("flaarum_stmts")
-  if err != nil {
-    return err
-  }
-
   orderOfTables := []string{
     "users", "teams", "team_members", "sessions", "events", "docs_folders", "docs_images",
-    "docs", "cab_folders", "cab_files"
+    "docs", "cab_folders", "cab_files",
   }
   for _, tableName := range orderOfTables {
     stmt, err := office683_shared.FlaarumStmts.ReadFile(filepath.Join("flaarum_stmts", tableName + ".txt"))

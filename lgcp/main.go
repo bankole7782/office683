@@ -201,6 +201,8 @@ domain:
 		}
 		var startupScript = `
 #! /bin/bash
+sudo apt update
+sudo apt install nano
 
 sudo snap install flaarum
 sudo snap start flaarum.store
