@@ -261,7 +261,7 @@ sudo snap install office683 --edge
 		}
 		imageURL := image.SelfLink
 
-		op, err := computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
+		op, err = computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
 			Description: "Data disk for a office683 server (" + instanceName + ").",
 			SizeGb: diskSizeInt,
 			Type: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
@@ -328,6 +328,9 @@ sudo snap install office683 --edge
 						Value: &startupScript,
 					},
 				},
+			},
+			Tags: &compute.Tags {
+				Items: []string{"https-server",},
 			},
 		}
 
