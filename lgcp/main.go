@@ -235,23 +235,23 @@ sudo snap install office683 --edge
 			panic(err)
 		}
 
-		// op, err := computeService.Addresses.Insert(conf.Get("project"), conf.Get("region"), &compute.Address{
-		// 	AddressType: "EXTERNAL",
-		// 	Description: "IP address for a office683 server (" + instanceName + ").",
-		// 	Name: instanceName + "-ip",
-		// }).Context(ctx).Do()
-		//
-		// err = waitForOperationRegion(conf.Get("project"), conf.Get("region"), computeService, op)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		//
-		// computeAddr, err := computeService.Addresses.Get(conf.Get("project"), conf.Get("region"), instanceName + "-ip").Context(ctx).Do()
-		// if err != nil {
-		// 	panic(err)
-		// }
-		//
-		// fmt.Println("Office683 server address: ", computeAddr.Address)
+		op, err := computeService.Addresses.Insert(conf.Get("project"), conf.Get("region"), &compute.Address{
+			AddressType: "EXTERNAL",
+			Description: "IP address for a office683 server (" + instanceName + ").",
+			Name: instanceName + "-ip",
+		}).Context(ctx).Do()
+
+		err = waitForOperationRegion(conf.Get("project"), conf.Get("region"), computeService, op)
+		if err != nil {
+			panic(err)
+		}
+
+		computeAddr, err := computeService.Addresses.Get(conf.Get("project"), conf.Get("region"), instanceName + "-ip").Context(ctx).Do()
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("Office683 server address: ", computeAddr.Address)
 
 		prefix := "https://www.googleapis.com/compute/v1/projects/" + conf.Get("project")
 
@@ -307,7 +307,7 @@ sudo snap install office683 --edge
 						{
 							Type: "ONE_TO_ONE_NAT",
 							Name: "External NAT",
-							// NatIP: computeAddr.Address,
+							NatIP: computeAddr.Address,
 						},
 					},
 				},
