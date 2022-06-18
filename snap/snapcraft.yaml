@@ -24,6 +24,10 @@ parts:
     plugin: go
     source: .
 
+  sslpart:
+    plugin: go
+    source: https://github.com/suyashkumar/ssl-proxy.git
+
 
 apps:
   lgcp:
@@ -38,3 +42,12 @@ apps:
     plugs:
       - network
       - network-bind
+
+  ssl:
+    command: bin/ssl
+    daemon: simple
+    restart-condition: on-abnormal
+    plugs:
+      - network
+      - network-bind
+      
