@@ -187,7 +187,6 @@ domain:
 
 		instanceName := fmt.Sprintf("o683-%s", strings.ToLower(office683_shared.UntestedRandomString(4)))
 		diskName := fmt.Sprintf("%s-disk", instanceName)
-  	dataDiskName := fmt.Sprintf("%s-ddisk", instanceName)
 
   	diskSizeInt, err := strconv.ParseInt(conf.Get("disk_size"), 10, 64)
   	if err != nil {
@@ -207,15 +206,6 @@ sudo apt install nano
 sudo snap install flaarum
 sudo snap start flaarum.store
 sudo flaarum.prod mpr
-
-DATA_BTRFS=/var/snap/flaarum/common/data_btrfs
-if  [ ! -d "$DATA_BTRFS" ]; then
-	sudo mkfs.btrfs /dev/sdb
-	sudo mkdir -p $DATA_BTRFS
-fi
-sudo mount -o discard,defaults /dev/sdb $DATA_BTRFS
-sudo chmod a+w $DATA_BTRFS
-
 sudo snap restart flaarum.store
 sudo snap start flaarum.tindexer
 sudo snap stop --disable flaarum.statsr
@@ -267,17 +257,6 @@ sudo snap install office683 --edge
 		}
 		imageURL := image.SelfLink
 
-		op, err = computeService.Disks.Insert(conf.Get("project"), conf.Get("zone"), &compute.Disk{
-			Description: "Data disk for a office683 server (" + instanceName + ").",
-			SizeGb: diskSizeInt,
-			Type: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
-			Name: dataDiskName,
-		}).Context(ctx).Do()
-		err = waitForOperationZone(conf.Get("project"), conf.Get("zone"), computeService, op)
-		if err != nil {
-			panic(err)
-		}
-
 		instance := &compute.Instance{
 			Name: instanceName,
 			Description: "office683 instance",
@@ -291,17 +270,6 @@ sudo snap install office683 --edge
 					InitializeParams: &compute.AttachedDiskInitializeParams{
 						DiskName:    diskName,
 						SourceImage: imageURL,
-						DiskType: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
-						DiskSizeGb: 10,
-					},
-				},
-				{
-					AutoDelete: false,
-					Boot:       false,
-					Type:       "PERSISTENT",
-
-					InitializeParams: &compute.AttachedDiskInitializeParams{
-						DiskName:    dataDiskName,
 						DiskType: prefix + "/zones/" + conf.Get("zone") + "/diskTypes/pd-ssd",
 						DiskSizeGb: diskSizeInt,
 					},
@@ -334,9 +302,6 @@ sudo snap install office683 --edge
 						Value: &startupScript,
 					},
 				},
-			},
-			Tags: &compute.Tags {
-				Items: []string{"https-server",},
 			},
 		}
 
