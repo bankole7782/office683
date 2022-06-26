@@ -1,6 +1,8 @@
 # office683
 
-a group of tools for any office
+A group of tools for any office.
+
+The developers of this program have no access to your data. Your data would be stored by you on your own servers.
 
 ## Currently Included Programs
 
@@ -13,7 +15,7 @@ a group of tools for any office
 
 ## Database
 
-The project uses [flaarum](https://github.com/saenuma/flaarum)
+This project uses [flaarum](https://github.com/saenuma/flaarum)
 
 ## Production Setup
 
@@ -29,9 +31,9 @@ The project uses [flaarum](https://github.com/saenuma/flaarum)
 
 1. Edit the config at `/var/lib/office683/install.zconf`. All fields must be set.
 
-1. Now start office683 services: `sudo snap restart o6sites` and `sudo snap restart o6ssl`
-
 1. Make sure port `443` and port `80` are open in your server's firewall.
+
+1. Now start office683 services: `sudo systemctl start o6sites` and `sudo systemctl start o6ssl`
 
 1. You can now view the project from the domain
 

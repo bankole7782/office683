@@ -40,6 +40,4 @@ domain:
 
 EOT
 
-echo "Starting Services"
 sudo systemctl daemon-reload
-sudo systemctl start o6sites
