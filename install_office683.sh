@@ -6,7 +6,8 @@ sudo apt install nano
 echo "Fetching Assets"
 rm -rf /opt/saenuma/office683
 mkdir -p /opt/saenuma/office683
-wget -q https://storage.googleapis.com/pandolee/office683/3/office683.tar.xz -O /opt/saenuma/office683.tar.xz
+mkdir -p /var/lib/office683/
+wget -q https://storage.googleapis.com/pandolee/office683/1/office683.tar.xz -O /opt/saenuma/office683.tar.xz
 tar -xf /opt/saenuma/office683.tar.xz -C /opt/saenuma/office683
 
 sudo chmod +x /opt/saenuma/office683/bin/o6sites

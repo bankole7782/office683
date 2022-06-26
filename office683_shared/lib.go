@@ -16,7 +16,7 @@ import (
 
 
 func GetRootPath() (string, error) {
-  dd = "/var/lib/office683"
+  dd := "/var/lib/office683"
   os.MkdirAll(dd, 0777)
 
   return dd, nil
@@ -79,10 +79,10 @@ func GetInstallationConfig() (zazabul.Config, error) {
 
   if conf.Get("admin_pass") == "" {
     conf.Update(map[string]string {
-  		"admin_pass": office683_shared.UntestedRandomString(50),
+  		"admin_pass": UntestedRandomString(50),
   	})
 
-    err = conf.Write(writePath)
+    err = conf.Write(confPath)
     if err != nil {
     	panic(err)
     }
