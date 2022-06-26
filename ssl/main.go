@@ -2,21 +2,14 @@ package main
 
 import (
   "fmt"
-  "os"
   "os/exec"
-  "strings"
-  "path/filepath"
   "github.com/bankole7782/office683/office683_shared"
 )
 
 func main() {
   fmt.Println("Starting ssl-proxy.")
 
-  begin := os.Getenv("SNAP")
-  command := "ssl-proxy"
-  if begin != "" && ! strings.HasPrefix(begin, "/snap/go/") {
-    command = filepath.Join(begin, "bin", "ssl-proxy")
-  }
+  command := "ssl-proxy-linux-amd64"
 
   conf, err := office683_shared.GetInstallationConfig()
   if err != nil {
