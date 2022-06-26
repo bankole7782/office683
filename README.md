@@ -6,7 +6,7 @@ The developers of this program have no access to your data. Your data would be s
 
 ## Currently Included Programs
 
-1.  **Cabinet**: A store of files. You can upload files created from your local programs here
+1. **Cabinet**: A store of files. You can upload files created from your local programs here
 
 1. **Documents**: A documents editor. It uses markdown. Its not like Microsoft Word.
 

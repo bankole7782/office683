@@ -41,3 +41,4 @@ domain:
 EOT
 
 sudo systemctl daemon-reload
+sudo systemctl start o6sites
