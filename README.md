@@ -8,7 +8,7 @@ The project uses [flaarum](https://github.com/saenuma/flaarum)
 
 ## Production Setup
 
-1. Install flaarum on a server with the instructions at [sae.ng](https://sae.ng/flaarumtuts/pinstall) and make sure the server has a static external address
+1. Install flaarum on a Ubuntu 20.04 server with the instructions at [sae.ng](https://sae.ng/flaarumtuts/pinstall) and make sure the server has a static external address
 
 1. Point a domain or subdomain to the server's IP. This is necessary for https config.
 
@@ -20,7 +20,9 @@ The project uses [flaarum](https://github.com/saenuma/flaarum)
 
 1. Edit the config at `/var/lib/office683/install.zconf`. All fields must be set.
 
-1. Now start office683 services: `sudo snap restart office683.sites` and `sudo snap restart office683.ssl`
+1. Now start office683 services: `sudo snap restart o6sites` and `sudo snap restart o6ssl`
+
+1. Make sure port `443` and port `80` are open in your server's firewall.
 
 1. You can now view the project from the domain
 
