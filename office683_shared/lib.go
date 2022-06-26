@@ -16,30 +16,8 @@ import (
 
 
 func GetRootPath() (string, error) {
-  hd, err := os.UserHomeDir()
-  if err != nil {
-    return "", errors.Wrap(err, "os error")
-  }
-  dd := os.Getenv("SNAP_COMMON")
-  if dd == "/var/snap/go/common" || dd == "" {
-    dd = filepath.Join(hd, "office683_data")
-    os.MkdirAll(dd, 0777)
-  }
-
-  return dd, nil
-}
-
-
-func GetUserPath() (string, error) {
-  hd, err := os.UserHomeDir()
-  if err != nil {
-    return "", errors.Wrap(err, "os error")
-  }
-  dd := os.Getenv("SNAP_USER_COMMON")
-  if dd == "/var/snap/go/common" || dd == "" {
-    dd = filepath.Join(hd, "office683_data")
-    os.MkdirAll(dd, 0777)
-  }
+  dd = "/var/lib/office683"
+  os.MkdirAll(dd, 0777)
 
   return dd, nil
 }
@@ -66,11 +44,15 @@ func DoesPathExists(p string) bool {
 
 
 func GetFlaarumClient() flaarum.Client {
-  conf, err := GetInstallationConfig()
-  if err != nil {
-    panic(err)
+  var keyStr string
+  keyStrPath := "/var/lib/flaarum/flaarum.keyfile"
+  raw, err := os.ReadFile(keyStrPath)
+  if err == nil {
+    keyStr = string(raw)
+  } else {
+    keyStr = "not-yet-set"
   }
-  keyStr := conf.Get("flaarum_keystr")
+
   flaarumClient := flaarum.NewClient("127.0.0.1", keyStr, "first_proj")
 
   err = flaarumClient.Ping()
@@ -95,9 +77,20 @@ func GetInstallationConfig() (zazabul.Config, error) {
     return zazabul.Config{}, errors.New(fmt.Sprintf("The file '%s' cannot be loaded.", confPath))
   }
 
+  if conf.Get("admin_pass") == "" {
+    conf.Update(map[string]string {
+  		"admin_pass": office683_shared.UntestedRandomString(50),
+  	})
+
+    err = conf.Write(writePath)
+    if err != nil {
+    	panic(err)
+    }
+  }
+
   for _, item := range conf.Items {
     if item.Value == "" {
-      if item.Name != "flaarum_keystr" && item.Name != "domain" {
+      if item.Name != "domain" {
         return zazabul.Config{}, errors.New("Every field in the launch file is compulsory.")
       }
     }
