@@ -2,6 +2,15 @@
 
 a group of tools for any office
 
+## Currently Included Programs
+
+1.  **Cabinet**: A store of files. You can upload files created from your local programs here
+
+1. **Documents**: A documents editor. It uses markdown. Its not like Microsoft Word.
+
+1. **Events**: A Record of Events. Prepares workers for future events and keeps memories of past events.
+
+
 ## Database
 
 The project uses [flaarum](https://github.com/saenuma/flaarum)
