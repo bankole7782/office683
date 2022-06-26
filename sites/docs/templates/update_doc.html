@@ -104,7 +104,7 @@
     <span>Doc Title: <b>{{.DocDetails.doc_title}}</b> </span>
     <a href="/doc/{{.DocId}}">View Rendered Document</a>
     <span>Rendered Document Link: <b>/doc/{{.DocId}}</b></span>
-    <a href="/doc/toggle_public/{{.DocId}}">Make {{if .DocDetails.public}} Private {{else}} Public {{end}}</a>
+    <a href="/doc/toggle_public/{{.DocId}}">Make {{if eq .DocDetails.public "true"}} Private {{else}} Public {{end}}</a>
   </div>
 
   <p id="offline" class="info" style="color: red;">

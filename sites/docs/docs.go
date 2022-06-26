@@ -443,9 +443,14 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
   }
 
+  publicStatusStr := "false"
+  if (*docRow)["public"].(bool) {
+    publicStatusStr = "true"
+  }
   docDetails := map[string]string {
     "doc_title": (*docRow)["doc_title"].(string),
     "updated": (*docRow)["update_dt"].(time.Time).String(),
+    "public": publicStatusStr,
   }
 
   var rawDoc []byte
