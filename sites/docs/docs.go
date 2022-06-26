@@ -328,9 +328,14 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  publicStatusStr := "false"
+  if (*docRow)["public"].(bool) {
+    publicStatusStr = "true"
+  }
   docDetails := map[string]string {
     "doc_title": (*docRow)["doc_title"].(string),
     "updated": (*docRow)["update_dt"].(time.Time).String(),
+    "public": publicStatusStr,
   }
 
   rootPath, err := office683_shared.GetRootPath()
@@ -464,4 +469,48 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
   tmpl := template.Must(template.ParseFS(content, "templates/render_doc.html"))
   tmpl.Execute(w, Context{renderedDoc, docDetails, docId})
+}
+
+
+func togglePublicStatus(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  docId := vars["id"]
+
+  status, _ := office683_shared.IsLoggedInUser(r)
+  if status == false {
+    http.Redirect(w, r, "/", 307)
+    return
+  }
+
+  flaarumClient := office683_shared.GetFlaarumClient()
+
+  docRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
+    table: docs
+    where:
+      id = %s
+    `, docId))
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum search error"))
+    return
+  }
+
+  newState := true
+  if (*docRow)["public"].(bool) == true {
+    newState = false
+  }
+
+  err = flaarumClient.UpdateRowsAny(fmt.Sprintf(`
+    table: docs
+    where:
+     id = %s
+    `, docId), map[string]any {
+    "update_dt": time.Now(),
+    "public": newState,
+  })
+  if err != nil {
+    office683_shared.ErrorPage(w, errors.Wrap(err, "flaarum update error"))
+    return
+  }
+
+  http.Redirect(w, r, "/update_doc/" + docId, 307)
 }
