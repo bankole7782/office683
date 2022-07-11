@@ -19,7 +19,7 @@ This project uses [flaarum](https://github.com/saenuma/flaarum)
 
 ## Production Setup
 
-1. Install flaarum on a Ubuntu 20.04 server with the instructions at [sae.ng](https://sae.ng/flaarumtuts/pinstall) and make sure the server has a static external address
+1. Install flaarum on a Ubuntu server with the instructions at [sae.ng](https://sae.ng/flaarumtuts/pinstall) and make sure the server has a static external address
 
 1. Point a domain or subdomain to the server's IP. This is necessary for https config.
 

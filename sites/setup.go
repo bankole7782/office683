@@ -2,6 +2,7 @@ package main
 
 import (
   "strings"
+  "runtime"
   "path/filepath"
   // "github.com/saenuma/flaarum"
   "github.com/saenuma/flaarum/flaarum_shared"
@@ -104,9 +105,19 @@ func CreateOrUpdateAllTables() error {
     "docs", "cab_folders", "cab_files",
   }
   for _, tableName := range orderOfTables {
-    stmt, err := office683_shared.FlaarumStmts.ReadFile(filepath.Join("flaarum_stmts", tableName + ".txt"))
-    if err != nil {
-      return err
+    var stmt []byte
+    var err error
+    if runtime.GOOS == "windows" {
+      stmt, err = office683_shared.FlaarumStmts.ReadFile("flaarum_stmts/" + tableName + ".txt")
+      if err != nil {
+        return err
+      }
+
+    } else {
+      stmt, err = office683_shared.FlaarumStmts.ReadFile(filepath.Join("flaarum_stmts", tableName + ".txt"))
+      if err != nil {
+        return err
+      }
     }
 
     err = createOrUpdateTable(string(stmt))
