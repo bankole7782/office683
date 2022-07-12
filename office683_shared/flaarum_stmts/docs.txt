@@ -9,3 +9,6 @@ fields:
 foreign_keys:
   folderid docs_folders on_delete_restrict
 ::
+unique_groups:
+  folderid doc_title
+::
