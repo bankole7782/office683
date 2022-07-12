@@ -337,20 +337,9 @@ func updateDoc(w http.ResponseWriter, r *http.Request) {
     "updated": (*docRow)["update_dt"].(time.Time).String(),
     "public": publicStatusStr,
   }
-
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
   rawDoc := ""
-  docPath := filepath.Join(rootPath, "docs", docId + ".md")
-  if office683_shared.DoesPathExists(docPath) {
-    raw, err := os.ReadFile(docPath)
-    if err != nil {
-      office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-      return
-    }
-    rawDoc = string(raw)
+  if (*docRow)["doc_md"] != nil {
+    rawDoc = (*docRow)["doc_md"].(string)
   }
 
   type Context struct {
@@ -373,24 +362,18 @@ func saveDoc(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   docId := vars["id"]
 
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
-
-  docPath := filepath.Join(rootPath, "docs", docId + ".md")
-  os.WriteFile(docPath, []byte(r.FormValue("raw_doc")), 0777)
-
   flaarumClient := office683_shared.GetFlaarumClient()
-  err = flaarumClient.UpdateRowsAny(fmt.Sprintf(`
+  err := flaarumClient.UpdateRowsAny(fmt.Sprintf(`
     table: docs
     where:
      id = %s
     `, docId), map[string]interface{} {
     "update_dt": time.Now(),
+    "doc_md": r.FormValue("raw_doc"),
   })
   if err != nil {
     fmt.Println(err)
+    http.Error(w, "Not ok", http.StatusInternalServerError)
   }
   fmt.Fprintf(w, "ok")
 }
@@ -401,13 +384,6 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
 
   vars := mux.Vars(r)
   docId := vars["id"]
-
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
-
-  docPath := filepath.Join(rootPath, "docs", docId + ".md")
 
   flaarumClient := office683_shared.GetFlaarumClient()
   docRow, err := flaarumClient.SearchForOne(fmt.Sprintf(`
@@ -452,16 +428,12 @@ func viewRenderedDoc(w http.ResponseWriter, r *http.Request) {
     "updated": (*docRow)["update_dt"].(time.Time).String(),
     "public": publicStatusStr,
   }
-
-  var rawDoc []byte
-  if office683_shared.DoesPathExists(docPath) {
-    rawDoc2, err := os.ReadFile(docPath)
-    if err != nil {
-      office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-      return
-    }
-    rawDoc = rawDoc2
+  var rawDocStr string
+  if (*docRow)["doc_md"] != nil {
+    rawDocStr = (*docRow)["doc_md"].(string)
   }
+
+  rawDoc := []byte(rawDocStr)
 
   renderedDocRaw := blackfriday.Run(rawDoc)
   renderedDoc := template.HTML(string(renderedDocRaw))

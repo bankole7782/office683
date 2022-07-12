@@ -4,6 +4,7 @@ fields:
   doc_title string required
   update_dt datetime required
   public bool
+  doc_md text
 ::
 foreign_keys:
   folderid docs_folders on_delete_restrict
