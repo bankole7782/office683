@@ -6,9 +6,7 @@ import (
   "time"
   "strconv"
   "fmt"
-  "os"
   "strings"
-  "path/filepath"
   "github.com/pkg/errors"
   "github.com/gorilla/mux"
   "github.com/russross/blackfriday/v2"
@@ -169,12 +167,6 @@ func docsOfFolder(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   folderId := vars["id"]
 
-  rootPath, err := office683_shared.GetRootPath()
-  if err != nil {
-    office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-    return
-  }
-
   flaarumClient := office683_shared.GetFlaarumClient()
 
   docRows, err := flaarumClient.Search(fmt.Sprintf(`
@@ -191,24 +183,11 @@ func docsOfFolder(w http.ResponseWriter, r *http.Request) {
 
   elems := make([]map[string]any, 0)
   for _, docRow := range *docRows {
-    docPath := filepath.Join(rootPath, "docs", strconv.FormatInt(docRow["id"].(int64), 10) + ".md")
-    docSize := "0B"
-    if office683_shared.DoesPathExists(docPath) {
-
-      file, err := os.Open(docPath)
-      if err != nil {
-        office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-        return
-      }
-      defer file.Close()
-
-      stat, err := file.Stat()
-      if err != nil {
-        office683_shared.ErrorPage(w, errors.Wrap(err, "os error"))
-        return
-      }
-      docSize = humanize.Bytes(uint64(stat.Size()))
+    var rawDoc string
+    if docRow["doc_md"] != nil {
+      rawDoc = docRow["doc_md"].(string)
     }
+    docSize := humanize.Bytes(uint64(len([]byte(rawDoc))))
 
     elems = append(elems, map[string]any {
       "doc_title": docRow["doc_title"],
